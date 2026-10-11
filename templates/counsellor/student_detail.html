@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block title %}Student Profile - Counsellor - EduGuard{% endblock %}
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('counsellor.referrals') }}" class="text-decoration-none text-muted"><i class="fas fa-arrow-left me-2"></i>Back to Referrals</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                    <i class="fas fa-user-graduate fa-4x text-secondary"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ student.name|default("Student Name") }}</h4>
+                <p class="text-muted mb-3">{{ student.email|default("student@example.com") }}</p>
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <span class="badge bg-secondary">{{ student.department|default("CS") }}</span>
+                    <span class="badge bg-secondary">Sem {{ student.semester|default("3") }}</span>
+                </div>
+                
+                <hr>
+                
+                <h5 class="text-muted mb-2">AI Risk Assessment</h5>
+                {% set risk = student.risk_level|default("High") %}
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <span class="badge {% if risk == 'High' %}badge-high{% elif risk == 'Medium' %}badge-medium{% else %}badge-low{% endif %} fs-6 py-2 px-3">{{ risk }} Risk</span>
+                    <span class="text-muted fw-bold">(Score: {{ student.risk_score|default(82) }})</span>
+                </div>
+                
+                <button class="btn btn-primary w-100 mt-4" style="background-color: var(--primary-color);" data-bs-toggle="modal" data-bs-target="#sessionModal">
+                    <i class="fas fa-calendar-plus me-2"></i>Schedule Session
+                </button>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-robot text-primary me-2"></i>AI Insights</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Consecutive absence pattern detected.</li>
+                    <li class="list-group-item"><i class="fas fa-chart-line text-danger me-2"></i>Significant GPA drop in current semester.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <ul class="nav nav-tabs mb-4 border-bottom-0" id="counsellorTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-bold px-4" data-bs-toggle="tab" data-bs-target="#history">Session History</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-bold px-4" data-bs-toggle="tab" data-bs-target="#observations">Teacher Observations</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-bold px-4" data-bs-toggle="tab" data-bs-target="#recommendations">Send Recommendations</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content card border-0 shadow-sm p-4">
+            <!-- Session History -->
+            <div class="tab-pane fade show active" id="history">
+                <h5 class="mb-4 fw-bold">Past Sessions</h5>
+                <div class="timeline position-relative ps-4 border-start border-2 border-primary">
+                    {% for session in sessions|default([{'date':'Oct 1', 'type':'In-person', 'notes':'Initial assessment. Student feels overwhelmed.'}]) %}
+                    <div class="mb-4 position-relative">
+                        <div class="position-absolute bg-primary rounded-circle" style="width: 14px; height: 14px; left: -31px; top: 4px;"></div>
+                        <h6 class="fw-bold mb-1">{{ session.type }} Session</h6>
+                        <small class="text-muted d-block mb-2">{{ session.date }}</small>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0 text-sm"><i class="fas fa-lock text-muted me-2" title="Private to you"></i>{{ session.notes }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No past sessions recorded.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Observations -->
+            <div class="tab-pane fade" id="observations">
+                <h5 class="mb-4 fw-bold">Teacher Feedback</h5>
+                <div class="list-group">
+                    {% for obs in observations|default([{'teacher':'Dr. Smith', 'date':'Oct 3', 'text':'Not completing assignments on time.'}]) %}
+                    <div class="list-group-item bg-light border-0 mb-2 rounded">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold text-primary">{{ obs.teacher }}</span>
+                            <small class="text-muted">{{ obs.date }}</small>
+                        </div>
+                        <p class="mb-0">{{ obs.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="tab-pane fade" id="recommendations">
+                <h5 class="mb-4 fw-bold">Send AI Recommendation to Student</h5>
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fw-semibold">Select Template</label>
+                        <select class="form-select bg-light">
+                            <option>Study Plan & Time Management</option>
+                            <option>Stress Relief Resources</option>
+                            <option>Academic Tutoring Link</option>
+                            <option>Custom Message</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted fw-semibold">Message (visible to student)</label>
+                        <textarea class="form-control bg-light" rows="4">I recommend reviewing these time management resources we discussed...</textarea>
+                    </div>
+                    <button class="btn btn-primary" style="background-color: var(--primary-color);">Send Recommendation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Session Modal -->
+<div class="modal fade" id="sessionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Schedule New Session</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label class="form-label">Date & Time</label>
+                <input type="datetime-local" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Type</label>
+                <select class="form-select">
+                    <option>In-person</option>
+                    <option>Online Video</option>
+                    <option>Phone Call</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary-color);">Schedule</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

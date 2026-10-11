@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Sessions - Student - EduGuard{% endblock %}
+{% block content %}
+<h3 class="mb-4" style="color: var(--primary-color);"><i class="fas fa-calendar-alt me-2"></i>My Counselling Sessions</h3>
+
+<div class="row">
+    <div class="col-md-8">
+        <h5 class="fw-bold text-primary mb-3">Upcoming Sessions</h5>
+        {% for session in sessions|default([{'date':'Tomorrow, 2:00 PM', 'counsellor':'Mr. Smith', 'type':'Online Video'}]) %}
+        <div class="card shadow-sm border-0 mb-4 border-start border-4 border-primary">
+            <div class="card-body d-flex justify-content-between align-items-center p-4">
+                <div>
+                    <h5 class="fw-bold mb-1">{{ session.date }}</h5>
+                    <p class="text-muted mb-0"><i class="fas fa-user-md me-2"></i>{{ session.counsellor }}</p>
+                    <p class="text-muted mb-0"><i class="fas fa-video me-2"></i>{{ session.type }}</p>
+                </div>
+                <button class="btn btn-primary" style="background-color: var(--primary-color);">Join Session</button>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-muted">No upcoming sessions scheduled.</p>
+        {% endfor %}
+
+        <h5 class="fw-bold text-muted mt-5 mb-3">Past Sessions</h5>
+        <div class="list-group list-group-flush shadow-sm rounded">
+            {% for past in past_sessions|default([{'date':'Sept 15, 2023', 'counsellor':'Mr. Smith', 'status':'Completed'}]) %}
+            <div class="list-group-item p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-bold mb-1">{{ past.date }}</h6>
+                        <small class="text-muted">with {{ past.counsellor }}</small>
+                    </div>
+                    <span class="badge bg-success">{{ past.status }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Notes are intentionally hidden from student view for privacy -->
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 bg-light mt-md-0 mt-4">
+            <div class="card-body p-4 text-center">
+                <i class="fas fa-hands-helping fa-3x text-primary mb-3"></i>
+                <h5 class="fw-bold">Need a Session?</h5>
+                <p class="text-muted small">You can request a meeting with a counsellor at any time. It's completely confidential.</p>
+                <a href="{{ url_for('student.request_help') }}" class="btn btn-outline-primary w-100 fw-bold">Request Help</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

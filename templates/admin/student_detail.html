@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Student Detail - EduGuard{% endblock %}
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin.students') }}" class="text-decoration-none text-muted"><i class="fas fa-arrow-left me-2"></i>Back to Students</a>
+</div>
+
+<div class="row g-4">
+    <!-- Profile & Risk -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center py-4">
+                <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
+                    <i class="fas fa-user-graduate fa-4x text-secondary"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ student.name|default("Student Name") }}</h4>
+                <p class="text-muted mb-3">{{ student.email|default("student@example.com") }}</p>
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <span class="badge bg-secondary">{{ student.department|default("CS") }}</span>
+                    <span class="badge bg-secondary">Sem {{ student.semester|default("3") }}</span>
+                    <span class="badge bg-secondary">{{ student.enrollment_year|default("2022") }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <h5 class="text-muted mb-3">Current Risk Status</h5>
+                {% set risk = student.risk_level|default("Medium") %}
+                <div class="d-inline-flex justify-content-center align-items-center rounded-circle mb-3 text-white 
+                    {% if risk == 'High' %}badge-high{% elif risk == 'Medium' %}badge-medium{% else %}badge-low{% endif %}" 
+                    style="width: 120px; height: 120px; font-size: 2rem; font-weight: bold;">
+                    {{ student.risk_score|default(65) }}
+                </div>
+                <h4 class="fw-bold {% if risk == 'High' %}text-danger{% elif risk == 'Medium' %}text-warning{% else %}text-success{% endif %}">{{ risk }} Risk</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts & Data -->
+    <div class="col-md-8">
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white fw-bold">Attendance Trend (30 Days)</div>
+                    <div class="card-body">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white fw-bold">Subject Marks</div>
+                    <div class="card-body">
+                        <canvas id="marksChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History & Observations -->
+        <div class="card mb-4">
+            <div class="card-header bg-white fw-bold">Risk History</div>
+            <div class="card-body">
+                <div class="timeline position-relative ps-4 border-start border-2 border-primary">
+                    {% for h in student.risk_history|default([{'date':'Oct 1', 'level':'Low'}, {'date':'Oct 5', 'level':'Medium'}]) %}
+                    <div class="mb-3 position-relative">
+                        <div class="position-absolute bg-primary rounded-circle" style="width: 12px; height: 12px; left: -27px; top: 5px;"></div>
+                        <div class="text-muted small">{{ h.date }}</div>
+                        <div class="fw-semibold">Changed to {{ h.level }} Risk</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mb-3" id="studentTabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#obs">Observations</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#sessions">Counselling</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#recs">Recommendations</button></li>
+        </ul>
+        <div class="tab-content card border-top-0 rounded-bottom">
+            <div class="tab-pane fade show active p-3" id="obs">
+                <p class="text-muted mb-0">Teacher observations go here.</p>
+            </div>
+            <div class="tab-pane fade p-3" id="sessions">
+                <p class="text-muted mb-0">Counselling session history goes here.</p>
+            </div>
+            <div class="tab-pane fade p-3" id="recs">
+                <p class="text-muted mb-0">AI recommendations applied go here.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const attCtx = document.getElementById('attendanceChart').getContext('2d');
+        new Chart(attCtx, {
+            type: 'line',
+            data: {
+                labels: ['W1', 'W2', 'W3', 'W4'],
+                datasets: [{ label: 'Attendance %', data: [90, 85, 70, 60], borderColor: '#1a237e', tension: 0.3 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        const marksCtx = document.getElementById('marksChart').getContext('2d');
+        new Chart(marksCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Math', 'Physics', 'CS', 'English'],
+                datasets: [{ label: 'Score', data: [65, 50, 85, 70], backgroundColor: '#4caf50' }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    });
+</script>
+{% endblock %}

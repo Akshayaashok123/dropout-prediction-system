@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Resources - Student - EduGuard{% endblock %}
+{% block content %}
+<h3 class="mb-4" style="color: var(--primary-color);"><i class="fas fa-book-open me-2"></i>Helpful Resources</h3>
+
+<div class="row g-4">
+    <!-- Category: Study Tips -->
+    <div class="col-md-12">
+        <h5 class="fw-bold text-muted mb-3 border-bottom pb-2">Study & Academic Support</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h6 class="fw-bold"><i class="fas fa-clock text-primary me-2"></i>Time Management Techniques</h6>
+                        <p class="text-muted small">Learn how to effectively manage your time and prioritize tasks using the Pomodoro technique.</p>
+                        <a href="#" class="text-decoration-none fw-semibold">Read more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h6 class="fw-bold"><i class="fas fa-pen text-primary me-2"></i>Note-taking Strategies</h6>
+                        <p class="text-muted small">Discover the Cornell method and other strategies to retain information better.</p>
+                        <a href="#" class="text-decoration-none fw-semibold">Read more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category: Mental Health -->
+    <div class="col-md-12 mt-5">
+        <h5 class="fw-bold text-muted mb-3 border-bottom pb-2">Mental Health & Wellness</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100 bg-light border-start border-4 border-success">
+                    <div class="card-body">
+                        <h6 class="fw-bold"><i class="fas fa-leaf text-success me-2"></i>Managing Exam Stress</h6>
+                        <p class="text-muted small">Breathing exercises and mindfulness techniques for test anxiety.</p>
+                        <a href="#" class="text-success text-decoration-none fw-semibold">View Guide <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mt-5 bg-primary text-white" style="background-color: var(--primary-color) !important;">
+    <div class="card-body p-4 text-center">
+        <h5 class="fw-bold mb-3"><i class="fas fa-phone-alt me-2"></i>24/7 Campus Helpline</h5>
+        <p class="mb-0">If you need immediate support, you can reach out to our campus crisis helpline anytime.</p>
+        <h3 class="fw-bold mt-3 mb-0">1-800-EDU-HELP</h3>
+    </div>
+</div>
+{% endblock %}

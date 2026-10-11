@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Referrals - Counsellor - EduGuard{% endblock %}
+{% block content %}
+<h3 class="mb-4" style="color: var(--primary-color);"><i class="fas fa-user-injured me-2"></i>Student Referrals</h3>
+
+<div class="row g-4">
+    {% for ref in referrals|default([
+        {'id':1, 'student':'John Doe', 'risk':'High', 'teacher':'Dr. Smith', 'date':'Oct 5, 2023', 'notes':'Declining attendance and poor performance.'},
+        {'id':2, 'student':'Alice Brown', 'risk':'Medium', 'teacher':'Prof. Davis', 'date':'Oct 4, 2023', 'notes':'Student seems disengaged lately.'}
+    ]) %}
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100 border-top border-4 {% if ref.risk == 'High' %}border-danger{% else %}border-warning{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ ref.student }}</h5>
+                        <small class="text-muted"><i class="fas fa-calendar-day me-1"></i>Referred on {{ ref.date }}</small>
+                    </div>
+                    <span class="badge {% if ref.risk == 'High' %}badge-high{% else %}badge-medium{% endif %} rounded-pill px-3 py-2">
+                        {{ ref.risk }} Risk
+                    </span>
+                </div>
+                
+                <div class="bg-light p-3 rounded mb-4">
+                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Referred By</small>
+                    <p class="mb-2">{{ ref.teacher }}</p>
+                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Teacher Notes</small>
+                    <p class="mb-0 text-sm fst-italic">"{{ ref.notes }}"</p>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('counsellor.student_detail', id=ref.id) }}" class="btn btn-outline-primary flex-grow-1">View Student Profile</a>
+                    <button class="btn btn-success flex-grow-1" data-bs-toggle="modal" data-bs-target="#scheduleModal">Accept & Schedule</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5 text-muted">
+        <i class="fas fa-check-circle fa-4x mb-3 text-success opacity-50"></i>
+        <h4>No Pending Referrals</h4>
+        <p>You're all caught up!</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Schedule Initial Session</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Time</label>
+                <input type="time" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Session Type</label>
+                <select class="form-select">
+                    <option>In-person</option>
+                    <option>Online Video</option>
+                    <option>Phone Call</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Schedule Session</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

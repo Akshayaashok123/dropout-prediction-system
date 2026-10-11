@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Students - Admin - EduGuard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 style="color: var(--primary-color);">Students Directory</h3>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal" style="background-color: var(--primary-color);">
+        <i class="fas fa-file-csv me-2"></i>Upload CSV
+    </button>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Search by name or ID...">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option value="">All Departments</option>
+                    <option value="CS">Computer Science</option>
+                    <option value="ENG">Engineering</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select">
+                    <option value="">All Risk Levels</option>
+                    <option value="High">High Risk</option>
+                    <option value="Medium">Medium Risk</option>
+                    <option value="Low">Low Risk</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Sem</th>
+                        <th>Attendance</th>
+                        <th>GPA</th>
+                        <th>Risk Level</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-2 me-2"><i class="fas fa-user text-secondary"></i></div>
+                                <div>
+                                    <h6 class="mb-0">{{ student.name }}</h6>
+                                    <small class="text-muted">{{ student.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ student.department }}</td>
+                        <td>{{ student.semester }}</td>
+                        <td>
+                            <div class="progress" style="height: 6px; width: 60px;">
+                                <div class="progress-bar {% if student.attendance < 75 %}bg-danger{% else %}bg-success{% endif %}" role="progressbar" style="width: {{ student.attendance }}%;"></div>
+                            </div>
+                            <small>{{ student.attendance }}%</small>
+                        </td>
+                        <td>{{ student.gpa }}</td>
+                        <td>
+                            <span class="badge {% if student.risk_level == 'High' %}badge-high{% elif student.risk_level == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
+                                {{ student.risk_level }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.student_detail', id=student.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="text-center py-4 text-muted">No students found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Upload Students CSV</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/admin/upload" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Select CSV File</label>
+                <input class="form-control" type="file" name="file" accept=".csv" required>
+            </div>
+            <p class="small text-muted">CSV must contain headers: name, email, department, semester, attendance, gpa.</p>
+            <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary-color);">Upload & Process</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

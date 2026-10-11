@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Request Help - EduGuard{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-5">
+                    <i class="fas fa-hands-helping fa-3x mb-3" style="color: var(--primary-color);"></i>
+                    <h3 class="fw-bold" style="color: var(--primary-color);">Reach Out for Help</h3>
+                    <p class="text-muted lead">It's okay to ask for help. We are here to support you.</p>
+                </div>
+
+                <form method="POST" action="">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted">What do you need help with?</label>
+                        <select class="form-select form-select-lg bg-light" name="category" required>
+                            <option value="">Select a category...</option>
+                            <option value="Academic">Academic Support</option>
+                            <option value="Personal">Personal/Mental Health</option>
+                            <option value="Financial">Financial Issues</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted">Tell us more (Optional)</label>
+                        <textarea class="form-control bg-light" name="message" rows="5" placeholder="Share as much or as little as you'd like..."></textarea>
+                    </div>
+
+                    <div class="mb-4 bg-light p-3 rounded">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="anonymous" id="anonymous">
+                            <label class="form-check-label fw-semibold" for="anonymous">
+                                Keep my request anonymous
+                            </label>
+                            <small class="d-block text-muted mt-1">If you check this, your counsellor will not know your identity unless you choose to share it later.</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold" style="background-color: var(--primary-color); border: none;">Submit Request <i class="fas fa-paper-plane ms-2"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

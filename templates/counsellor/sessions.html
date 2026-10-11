@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Sessions - Counsellor - EduGuard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 style="color: var(--primary-color);"><i class="fas fa-calendar-check me-2"></i>My Sessions</h3>
+</div>
+
+<div class="card mb-4 shadow-sm border-0">
+    <div class="card-body">
+        <form class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control bg-light" placeholder="Search student name...">
+            </div>
+            <div class="col-md-4">
+                <select class="form-select bg-light">
+                    <option value="">All Statuses</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" class="form-control bg-light">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary-color);">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for session in sessions|default([
+        {'student':'John Doe', 'date':'Today, 2:00 PM', 'status':'Scheduled', 'type':'Online Video'},
+        {'student':'Alice Brown', 'date':'Yesterday, 10:00 AM', 'status':'Completed', 'type':'In-person'}
+    ]) %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="fw-bold mb-0">{{ session.student }}</h5>
+                    <span class="badge {% if session.status == 'Scheduled' %}bg-primary{% elif session.status == 'Completed' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ session.status }}
+                    </span>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="mb-1 text-muted"><i class="far fa-clock me-2"></i>{{ session.date }}</p>
+                    <p class="mb-0 text-muted"><i class="fas fa-map-marker-alt me-2 px-1"></i>{{ session.type }}</p>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex gap-2">
+                    <a href="#" class="btn btn-outline-primary btn-sm flex-grow-1">View Student</a>
+                    {% if session.status == 'Scheduled' %}
+                    <button class="btn btn-success btn-sm flex-grow-1">Start / Complete</button>
+                    {% else %}
+                    <button class="btn btn-outline-secondary btn-sm flex-grow-1">View Notes</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGuard - AI-Powered Dropout Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        .navbar-brand { font-weight: bold; color: #1a237e !important; font-size: 1.5rem;}
+        .hero { background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%); color: white; padding: 120px 0 100px; text-align: center; }
+        .hero h1 { font-size: 3.5rem; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);}
+        .hero p { font-size: 1.25rem; margin-bottom: 40px; opacity: 0.9; }
+        .step-card { text-align: center; padding: 40px 20px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 12px; height: 100%; transition: transform 0.3s; background: white;}
+        .step-card:hover { transform: translateY(-10px); box-shadow: 0 8px 25px rgba(0,0,0,0.1);}
+        .step-icon { font-size: 45px; color: #1a237e; margin-bottom: 25px; }
+        .stat-box { background: white; padding: 40px 20px; text-align: center; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .stat-box h2 { color: #1a237e; font-size: 2.8rem; font-weight: bold; margin-bottom: 10px;}
+        .feature-card { border-left: 5px solid #1a237e; padding: 30px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; border-radius: 0 10px 10px 0;}
+        footer { background: #0a1045; color: rgba(255,255,255,0.8); padding: 50px 0 20px; text-align: center; }
+        footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
+        footer a:hover { color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">🎓 EduGuard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="ms-auto">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary me-2 px-4">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary px-4" style="background-color: #1a237e; border-color: #1a237e;">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero mt-5">
+        <div class="container">
+            <h1>EduGuard</h1>
+            <p>AI-Powered Dropout Prediction & Counselling System</p>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-lg text-primary px-5 py-3 fw-bold rounded-pill shadow-lg mt-3">Login to Dashboard <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <h2 class="text-center mb-5" style="color: #1a237e; font-weight: bold;">How It Works</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <i class="fas fa-database step-icon"></i>
+                        <h5>1. Data Collection</h5>
+                        <p class="text-muted small mt-3">Gathering attendance, grades, and engagement metrics securely.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <i class="fas fa-brain step-icon"></i>
+                        <h5>2. AI Analysis</h5>
+                        <p class="text-muted small mt-3">Machine learning algorithms process data to identify risk patterns.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <i class="fas fa-chart-pie step-icon"></i>
+                        <h5>3. Risk Assessment</h5>
+                        <p class="text-muted small mt-3">Students are categorized into clear, actionable risk levels.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-card">
+                        <i class="fas fa-hands-helping step-icon"></i>
+                        <h5>4. Counselling Support</h5>
+                        <p class="text-muted small mt-3">Timely interventions and personalized help are provided.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="row text-center g-4">
+                <div class="col-md-3"><div class="stat-box"><h2>50+</h2><p class="mb-0 text-muted fw-semibold">Students Monitored</p></div></div>
+                <div class="col-md-3"><div class="stat-box"><h2>3</h2><p class="mb-0 text-muted fw-semibold">Risk Levels</p></div></div>
+                <div class="col-md-3"><div class="stat-box"><h2><i class="fas fa-bolt text-warning"></i></h2><p class="mb-0 text-muted fw-semibold">Real-time Alerts</p></div></div>
+                <div class="col-md-3"><div class="stat-box"><h2><i class="fas fa-robot text-primary"></i></h2><p class="mb-0 text-muted fw-semibold">AI Recommendations</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <h2 class="text-center mb-5" style="color: #1a237e; font-weight: bold;">Key Features</h2>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <h4 style="color: #1a237e;"><i class="fas fa-bell text-warning me-2"></i> Early Warning System</h4>
+                        <p class="text-muted mt-3 mb-0">Detect subtle signs of academic struggle before they become major issues. Intervene early to ensure student success.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <h4 style="color: #1a237e;"><i class="fas fa-user-md text-success me-2"></i> Personalized Support</h4>
+                        <p class="text-muted mt-3 mb-0">Tailored AI-driven recommendations and direct links to professional counselling for every student in need.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <h4 style="color: #1a237e;"><i class="fas fa-shield-alt text-primary me-2"></i> Privacy First</h4>
+                        <p class="text-muted mt-3 mb-0">Non-stigmatizing interface for students and secure data handling. We show 'Wellness Scores', not 'Dropout Risk'.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <h4 class="mb-4 text-white">🎓 EduGuard</h4>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Support</a>
+            </div>
+            <p class="mb-0 small">&copy; 2023 EduGuard. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

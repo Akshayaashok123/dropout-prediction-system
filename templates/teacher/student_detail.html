@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Student Profile - Teacher - EduGuard{% endblock %}
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('teacher.students') }}" class="text-decoration-none text-muted"><i class="fas fa-arrow-left me-2"></i>Back to My Students</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card mb-4 text-center py-4">
+            <div class="card-body">
+                <i class="fas fa-user-circle fa-5x text-secondary mb-3"></i>
+                <h4 class="fw-bold">{{ student.name|default("Student Name") }}</h4>
+                <p class="text-muted">{{ student.email|default("student@example.com") }}</p>
+                {% set risk = student.risk_level|default("High") %}
+                <div class="d-inline-flex justify-content-center align-items-center rounded-circle mt-3 text-white 
+                    {% if risk == 'High' %}badge-high{% elif risk == 'Medium' %}badge-medium{% else %}badge-low{% endif %}" 
+                    style="width: 100px; height: 100px; font-size: 2rem; font-weight: bold;">
+                    {{ student.risk_score|default(85) }}
+                </div>
+                <h5 class="mt-3 {% if risk == 'High' %}text-danger{% elif risk == 'Medium' %}text-warning{% else %}text-success{% endif %} fw-bold">{{ risk }} Risk</h5>
+                
+                <button class="btn btn-primary w-100 mt-4" style="background-color: var(--primary-color);" data-bs-toggle="modal" data-bs-target="#referModal">
+                    <i class="fas fa-hands-helping me-2"></i>Refer to Counsellor
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white fw-bold"><i class="fas fa-search-plus text-primary me-2"></i>Key Risk Factors (AI Explanations)</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for factor in factors %}
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        <span>{{ factor }}</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-muted">No high-risk indicators detected.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white fw-bold">Attendance (30 Days)</div>
+                    <div class="card-body"><canvas id="attChart"></canvas></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-white fw-bold">Subject Marks</div>
+                    <div class="card-body"><canvas id="marksChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white fw-bold">Add Observation</div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Category</label>
+                        <select class="form-select bg-light" name="category">
+                            <option value="Academic">Academic Performance</option>
+                            <option value="Behavioral">Behavioral Change</option>
+                            <option value="Attendance">Attendance Issue</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Observation Notes</label>
+                        <textarea class="form-control bg-light" name="notes" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color);">Submit Observation</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-white fw-bold">Previous Observations</div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for obs in observations|default([{'date':'Oct 1', 'category':'Behavioral', 'text':'Seems distracted in class recently.'}]) %}
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 text-primary">{{ obs.category }}</h6>
+                            <small class="text-muted">{{ obs.date }}</small>
+                        </div>
+                        <p class="mb-1 text-sm">{{ obs.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Refer Modal -->
+<div class="modal fade" id="referModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Refer Student to Counsellor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="">
+            <div class="mb-3">
+                <label class="form-label">Reason for Referral</label>
+                <textarea class="form-control" name="reason" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary-color);">Confirm Referral</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        new Chart(document.getElementById('attChart').getContext('2d'), { type: 'line', data: { labels: ['W1', 'W2', 'W3', 'W4'], datasets: [{ label: 'Attendance %', data: [90, 85, 70, 60], borderColor: '#1a237e' }] } });
+        new Chart(document.getElementById('marksChart').getContext('2d'), { type: 'bar', data: { labels: ['Math', 'Physics', 'CS', 'English'], datasets: [{ label: 'Score', data: [65, 50, 85, 70], backgroundColor: '#4caf50' }] } });
+    });
+</script>
+{% endblock %}

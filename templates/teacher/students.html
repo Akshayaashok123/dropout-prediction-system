@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Students - Teacher - EduGuard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 style="color: var(--primary-color);">My Students</h3>
+</div>
+
+<div class="row g-4">
+    {% for student in students|default([
+        {'id': 1, 'name': 'John Doe', 'attendance': 65, 'gpa': 2.4, 'risk': 'High', 'score': 85},
+        {'id': 2, 'name': 'Jane Smith', 'attendance': 92, 'gpa': 3.8, 'risk': 'Low', 'score': 15}
+    ]) %}
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded-circle p-2 me-2"><i class="fas fa-user text-secondary"></i></div>
+                        <h5 class="mb-0 fw-bold">{{ student.name }}</h5>
+                    </div>
+                    <span class="badge {% if student.risk == 'High' %}badge-high{% elif student.risk == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
+                        {{ student.risk }} Risk
+                    </span>
+                </div>
+                
+                <div class="row mb-3 text-center g-2">
+                    <div class="col-6">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted d-block">Attendance</small>
+                            <strong class="{% if student.attendance < 75 %}text-danger{% endif %}">{{ student.attendance }}%</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted d-block">GPA</small>
+                            <strong>{{ student.gpa }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('teacher.student_detail', id=student.id) }}" class="btn btn-outline-primary btn-sm">View Details</a>
+                    {% if student.risk == 'High' or student.risk == 'Medium' %}
+                    <button class="btn btn-primary btn-sm" style="background-color: var(--primary-color);">Refer to Counsellor</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

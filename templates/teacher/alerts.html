@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Alerts - Teacher - EduGuard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 style="color: var(--primary-color);"><i class="fas fa-bell me-2"></i>My Alerts</h3>
+    <button class="btn btn-outline-primary btn-sm">Mark All as Read</button>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="list-group list-group-flush">
+        {% for alert in alerts|default([
+            {'id': 1, 'type': 'risk_high', 'message': 'John Doe (CS) risk level increased to High.', 'time': '10 mins ago', 'read': false},
+            {'id': 2, 'type': 'attendance', 'message': 'Jane Smith has missed 3 consecutive classes.', 'time': '1 day ago', 'read': true}
+        ]) %}
+        <div class="list-group-item py-4 {% if not alert.read %}bg-light border-start border-4 border-primary{% endif %}">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        {% if alert.type == 'risk_high' %}
+                        <i class="fas fa-exclamation-circle fa-2x text-danger"></i>
+                        {% elif alert.type == 'attendance' %}
+                        <i class="fas fa-user-clock fa-2x text-warning"></i>
+                        {% else %}
+                        <i class="fas fa-info-circle fa-2x text-info"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">{{ alert.message }}</h6>
+                        <small class="text-muted">{{ alert.time }}</small>
+                    </div>
+                </div>
+                <div>
+                    {% if not alert.read %}
+                    <form method="POST" action="" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark as Read</button>
+                    </form>
+                    {% endif %}
+                    <a href="#" class="btn btn-sm btn-primary" style="background-color: var(--primary-color);">View Student</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="p-5 text-center text-muted">
+            <i class="fas fa-bell-slash fa-3x mb-3"></i>
+            <h5>No new alerts</h5>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
