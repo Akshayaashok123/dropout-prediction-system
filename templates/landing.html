@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduGuard - AI-Powered Student Retention & Dropout Prevention Platform</title>
+    <title>EduGuard - Student Early Warning & Retention System</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --primary-light: #818cf8;
-            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            --hero-gradient: linear-gradient(135deg, #090d16 0%, #1e1b4b 60%, #312e81 100%);
+            --primary: #1e3a8a;
+            --primary-accent: #2563eb;
+            --primary-subtle: #dbeafe;
+            --navy-dark: #0f172a;
+            --slate-border: #e2e8f0;
+            --bg-academic: #f8fafc;
             --font-heading: 'Outfit', sans-serif;
             --font-body: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
             font-family: var(--font-body);
-            background-color: #f8fafc;
+            background-color: var(--bg-academic);
             color: #1e293b;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
@@ -34,352 +35,409 @@
 
         h1, h2, h3, h4, h5, h6 {
             font-family: var(--font-heading);
-            letter-spacing: -0.02em;
-        }
-
-        /* Glass Navbar */
-        .navbar-landing {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.92);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
-        }
-
-        .brand-icon-box {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: var(--hero-gradient);
-            color: white;
-            padding: 130px 0 100px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(124, 58, 237, 0.35) 0%, rgba(79, 70, 229, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: -15%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(79, 70, 229, 0) 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .hero-badge {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #e0e7ff;
-            padding: 8px 18px;
-            border-radius: 9999px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 24px;
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #a5b4fc 0%, #ffffff 50%, #c4b5fd 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: #cbd5e1;
-            max-width: 650px;
-            margin-bottom: 36px;
-            line-height: 1.6;
-        }
-
-        /* Glass Simulator Card */
-        .simulator-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 24px;
+            letter-spacing: -0.01em;
             color: #0f172a;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 32px;
-            position: relative;
-            z-index: 10;
         }
 
-        /* Bento Grid Feature Cards */
-        .feature-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 32px;
-            height: 100%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        /* Top Institutional Bar */
+        .inst-header-strip {
+            background-color: #0f172a;
+            color: #cbd5e1;
+            font-size: 0.78rem;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .feature-card:hover {
-            transform: translateY(-6px);
-            border-color: #cbd5e1;
-            box-shadow: 0 20px 35px -10px rgba(79, 70, 229, 0.12);
+        /* Main Navbar */
+        .navbar-academic {
+            background-color: #ffffff;
+            border-bottom: 2px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1040;
         }
 
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
+        .brand-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 22px;
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1);
-        }
-
-        /* Metric Highlights */
-        .metric-banner {
-            background: white;
-            border-radius: 24px;
-            padding: 40px 30px;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.06);
-            border: 1px solid #e2e8f0;
-            margin-top: -60px;
-            position: relative;
-            z-index: 20;
-        }
-
-        .metric-item h2 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 4px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Step Card */
-        .workflow-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px 24px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
-            position: relative;
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .workflow-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px -5px rgba(0,0,0,0.08);
-        }
-
-        .workflow-step-num {
-            position: absolute;
-            top: -14px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
             color: white;
-            font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.25);
+        }
+
+        /* Academic Hero */
+        .academic-hero {
+            background: linear-gradient(180deg, #f1f5f9 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--slate-border);
+            padding: 60px 0 50px;
+        }
+
+        .portal-entry-card {
+            background: #ffffff;
+            border: 1px solid var(--slate-border);
+            border-radius: 14px;
+            padding: 22px;
+            height: 100%;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .portal-entry-card:hover {
+            transform: translateY(-3px);
+            border-color: #93c5fd;
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1);
+            color: inherit;
+        }
+
+        .portal-entry-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            font-size: 1.2rem;
+            margin-bottom: 14px;
         }
 
-        /* Role Pill Tabs */
-        .role-pill {
+        /* Calculator / Simulator Box */
+        .academic-calc-box {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+            padding: 28px;
+        }
+
+        /* System Module Cards */
+        .module-card {
+            background: #ffffff;
+            border: 1px solid var(--slate-border);
             border-radius: 14px;
-            padding: 16px 20px;
-            cursor: pointer;
+            padding: 26px;
+            height: 100%;
             transition: all 0.2s ease;
         }
 
-        .role-pill.active {
-            background: #eef2ff;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+        .module-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Badges */
+        .academic-tag {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         /* Demo Pill Button */
-        .btn-demo-quick {
+        .demo-persona-card {
             border: 1px solid #e2e8f0;
             background: white;
             border-radius: 12px;
-            padding: 12px 18px;
+            padding: 14px 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             text-decoration: none;
             color: #1e293b;
-            font-weight: 600;
-            font-size: 0.9rem;
             transition: all 0.2s ease;
         }
 
-        .btn-demo-quick:hover {
+        .demo-persona-card:hover {
             background: #f8fafc;
-            border-color: var(--primary-light);
-            color: var(--primary);
+            border-color: #93c5fd;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.1);
+            box-shadow: 0 6px 14px rgba(30, 58, 138, 0.08);
+            color: #1e3a8a;
         }
 
-        @media (max-width: 991px) {
-            .hero-title { font-size: 2.5rem; }
-            .hero-section { padding: 110px 0 60px; }
-            .metric-banner { margin-top: 0; }
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            padding: 45px 0 25px;
+            font-size: 0.88rem;
+        }
+
+        footer a {
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #ffffff;
         }
     </style>
 </head>
 <body>
 
-    <!-- Fixed Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-landing fixed-top py-3">
+    <!-- Institutional Header Strip -->
+    <div class="inst-header-strip">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-university me-2 text-primary-subtle"></i>
+                <span>College Academic Information & Student Care Portal</span>
+            </div>
+            <div class="d-none d-md-flex align-items-center gap-3">
+                <span><i class="fas fa-calendar-alt me-1"></i> Academic Session 2025-26</span>
+                <span>&bull;</span>
+                <span class="text-success"><i class="fas fa-check-circle me-1"></i> System Operational</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-academic">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                <div class="brand-icon-box">
+                <div class="brand-badge">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
-                <span class="fw-bold fs-4 text-dark">Edu<span style="color: var(--primary);">Guard</span></span>
+                <div>
+                    <span class="fw-bold fs-4 text-dark lh-1 d-block">Edu<span style="color: var(--primary-accent);">Guard</span></span>
+                    <small class="text-muted fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;">Dropout Prediction & Mentorship</small>
+                </div>
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navAcademic">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navContent">
+
+            <div class="collapse navbar-collapse" id="navAcademic">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-3 fw-semibold">
-                    <li class="nav-item"><a class="nav-link text-dark" href="#simulator">Live Simulator</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#workflow">How It Works</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#roles">Portals</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#portals">Portal Roles</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#calculator">Risk Assessment Model</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#modules">System Modules</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#departments">Departments</a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="#faq">FAQ</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary px-4 fw-bold">Sign In</a>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary px-4 fw-bold text-white" style="background: var(--primary-gradient); border: none;">Get Started Free</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary px-3 fw-bold">
+                        <i class="fas fa-sign-in-alt me-1"></i> Campus Login
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary px-3 fw-bold" style="background-color: var(--primary); border-color: var(--primary);">
+                        <i class="fas fa-user-plus me-1"></i> Register
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <!-- Academic Hero & Overview -->
+    <section class="academic-hero">
         <div class="container">
             <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <div class="hero-badge">
-                        <i class="fas fa-sparkles text-warning"></i>
-                        <span>AI-Driven Retention & Early Intervention v2.4</span>
-                    </div>
-                    <h1 class="hero-title">
-                        Predict Student Dropout <span class="gradient-text">Before It Happens</span>
+                <div class="col-lg-7">
+                    <span class="academic-tag mb-3">
+                        <i class="fas fa-shield-alt"></i> Institutional Retention Initiative
+                    </span>
+                    <h1 class="fw-bold display-5 mb-3 text-dark">
+                        Student Early Warning & Academic Support System
                     </h1>
-                    <p class="hero-subtitle">
-                        EduGuard harnesses machine learning to detect early academic distress, trigger compassionate counselling interventions, and safeguard student completion rates across departments.
+                    <p class="lead text-muted mb-4 fs-6">
+                        An internal institutional platform combining predictive machine learning models and faculty mentoring to identify academic distress early, coordinate counselling interventions, and support students toward degree completion.
                     </p>
-                    <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-lg px-4 py-3 fw-bold rounded-pill text-primary shadow-lg">
-                            <i class="fas fa-rocket me-2"></i> Launch Portal
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg px-4 py-2 fs-6 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
+                            <i class="fas fa-key me-2"></i> Access Student / Staff Portal
                         </a>
-                        <a href="#simulator" class="btn btn-outline-light btn-lg px-4 py-3 fw-bold rounded-pill">
-                            <i class="fas fa-play me-2"></i> Try Interactive Simulator
+                        <a href="#calculator" class="btn btn-outline-secondary btn-lg px-4 py-2 fs-6 fw-bold">
+                            <i class="fas fa-calculator me-2"></i> Model Risk Calculator
                         </a>
                     </div>
-                    <div class="d-flex align-items-center gap-3 text-white-50 small">
-                        <span><i class="fas fa-check-circle text-success me-1"></i> 94.2% ML Accuracy</span>
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted small pt-2 border-top">
+                        <span><i class="fas fa-check text-success me-1"></i> Multi-Department Support</span>
                         <span>&bull;</span>
-                        <span><i class="fas fa-lock text-info me-1"></i> Privacy First</span>
+                        <span><i class="fas fa-check text-success me-1"></i> Confidential Counselling Queue</span>
                         <span>&bull;</span>
-                        <span><i class="fas fa-bolt text-warning me-1"></i> Real-Time Alerts</span>
+                        <span><i class="fas fa-check text-success me-1"></i> 50+ Tracked Records</span>
                     </div>
                 </div>
 
-                <!-- Interactive Live Risk Simulator on Hero -->
-                <div class="col-lg-6" id="simulator">
-                    <div class="simulator-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-brain text-primary me-2"></i>Live AI Risk Engine Simulator</h5>
-                                <small class="text-muted">Adjust student metrics to see real-time inference</small>
-                            </div>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small fw-bold">Live Model</span>
+                <!-- Campus Portal Roles Quick Grid -->
+                <div class="col-lg-5" id="portals">
+                    <div class="p-3 bg-white rounded-3 border shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-th-large text-primary me-2"></i>Department Portals</h6>
+                            <span class="badge bg-light text-muted border">Role-Based Access</span>
                         </div>
-
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small fw-bold mb-1">
-                                <span>Attendance Rate</span>
-                                <span class="text-primary" id="valAttendance">72%</span>
-                            </div>
-                            <input type="range" class="form-range" id="inputAttendance" min="30" max="100" value="72">
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small fw-bold mb-1">
-                                <span>Cumulative GPA (out of 10)</span>
-                                <span class="text-primary" id="valGPA">6.2</span>
-                            </div>
-                            <input type="range" class="form-range" id="inputGPA" min="2.0" max="10.0" step="0.1" value="6.2">
-                        </div>
-
-                        <div class="row g-2 mb-3">
+                        <div class="row g-2">
                             <div class="col-6">
-                                <label class="small fw-bold text-muted mb-1">Semester</label>
+                                <a href="{{ url_for('auth.login') }}?role=admin" class="portal-entry-card">
+                                    <div class="portal-entry-icon bg-danger-subtle text-danger">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Administrator</h6>
+                                    <small class="text-muted" style="font-size: 0.76rem;">Analytics & ML Batch Scoring</small>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ url_for('auth.login') }}?role=teacher" class="portal-entry-card">
+                                    <div class="portal-entry-icon bg-primary-subtle text-primary">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Faculty / Teacher</h6>
+                                    <small class="text-muted" style="font-size: 0.76rem;">Attendance, Marks & Alerts</small>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ url_for('auth.login') }}?role=counsellor" class="portal-entry-card">
+                                    <div class="portal-entry-icon bg-warning-subtle text-warning-emphasis">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Counsellor Desk</h6>
+                                    <small class="text-muted" style="font-size: 0.76rem;">Referrals & Session Logs</small>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="{{ url_for('auth.login') }}?role=student" class="portal-entry-card">
+                                    <div class="portal-entry-icon bg-success-subtle text-success">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Student Portal</h6>
+                                    <small class="text-muted" style="font-size: 0.76rem;">Wellness Score & Study Bot</small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Demo Accounts (Persona Selector) -->
+    <section class="py-4 bg-white border-bottom">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-users text-primary me-2"></i>Campus Testing Accounts</h6>
+                    <small class="text-muted">Click any persona to auto-populate credentials for evaluation</small>
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=admin" class="demo-persona-card">
+                        <div class="rounded-circle bg-danger text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">System Admin</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">admin@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=teacher" class="demo-persona-card">
+                        <div class="rounded-circle bg-primary text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">Faculty Lecturer</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">teacher1@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=counsellor" class="demo-persona-card">
+                        <div class="rounded-circle bg-warning text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">Student Counsellor</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">counsellor1@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=student" class="demo-persona-card">
+                        <div class="rounded-circle bg-success text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">Student Member</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">student1@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risk Calculator / Assessment Model Demo -->
+    <section class="py-5" id="calculator">
+        <div class="container py-2">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-5">
+                    <span class="badge bg-light text-primary border mb-2 px-2 py-1 small fw-bold">ACADEMIC ALGORITHM</span>
+                    <h3 class="fw-bold text-dark">Academic Risk Assessment Calculator</h3>
+                    <p class="text-muted small">
+                        This interactive demonstration shows how our machine learning models weigh core variables—such as classroom attendance percentage, semester GPA, and backlogs—to calculate an early intervention risk score.
+                    </p>
+                    <div class="p-3 bg-white rounded-3 border mb-3">
+                        <h6 class="fw-bold text-dark small mb-1"><i class="fas fa-info-circle text-primary me-2"></i>Intervention Thresholds</h6>
+                        <ul class="list-unstyled mb-0 small text-muted">
+                            <li class="py-1"><span class="badge bg-danger-subtle text-danger me-2">Score &ge; 65%</span> Immediate academic advisor intervention & counselling</li>
+                            <li class="py-1"><span class="badge bg-warning-subtle text-warning-emphasis me-2">Score 40-64%</span> Tutoring schedule and laboratory monitoring</li>
+                            <li class="py-1"><span class="badge bg-success-subtle text-success me-2">Score &lt; 40%</span> Stable academic standing; self-paced guidance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="academic-calc-box">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-sliders-h text-primary me-2"></i>Metric Parameter Simulator</h5>
+                            <span class="badge bg-light text-muted border">Live Assessment</span>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-dark mb-1 d-flex justify-content-between">
+                                    <span>Classroom Attendance</span>
+                                    <span class="text-primary" id="valAttendance">74%</span>
+                                </label>
+                                <input type="range" class="form-range" id="inputAttendance" min="30" max="100" value="74">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-dark mb-1 d-flex justify-content-between">
+                                    <span>Cumulative GPA (out of 10)</span>
+                                    <span class="text-primary" id="valGPA">6.5</span>
+                                </label>
+                                <input type="range" class="form-range" id="inputGPA" min="2.0" max="10.0" step="0.1" value="6.5">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-dark mb-1">Current Semester</label>
                                 <select class="form-select form-select-sm" id="inputSemester">
-                                    <option value="1">Semester 1 (Freshman)</option>
+                                    <option value="1">Semester 1 (First Year)</option>
                                     <option value="2">Semester 2</option>
-                                    <option value="3" selected>Semester 3 (Sophomore)</option>
+                                    <option value="3" selected>Semester 3 (Second Year)</option>
                                     <option value="4">Semester 4</option>
-                                    <option value="5">Semester 5</option>
+                                    <option value="5">Semester 5 (Third Year)</option>
                                 </select>
                             </div>
-                            <div class="col-6">
-                                <label class="small fw-bold text-muted mb-1">Past Arrears / Backlogs</label>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-dark mb-1">Active Backlogs / Arrears</label>
                                 <select class="form-select form-select-sm" id="inputBacklogs">
                                     <option value="0">0 Backlogs</option>
                                     <option value="1" selected>1 Backlog</option>
@@ -389,22 +447,22 @@
                             </div>
                         </div>
 
-                        <!-- Live Inference Card -->
-                        <div class="p-3 rounded-3 mt-3 border transition-all" id="inferenceBox" style="background: #f8fafc;">
+                        <!-- Result Assessment Box -->
+                        <div class="p-3 rounded-3 border" id="calcResultBox" style="background-color: #f8fafc;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="text-muted small text-uppercase fw-bold">Predicted Risk Category</div>
-                                    <div class="fs-4 fw-bold" id="inferenceBadge" style="color: #d97706;">Moderate Risk</div>
+                                    <div class="text-muted small text-uppercase fw-bold">Computed Category</div>
+                                    <div class="h5 fw-bold mb-0" id="calcCategory" style="color: #d97706;">Moderate Risk</div>
                                 </div>
                                 <div class="text-end">
-                                    <div class="text-muted small text-uppercase fw-bold">Calculated Risk Index</div>
-                                    <div class="fs-3 fw-bold" id="inferenceScore">48%</div>
+                                    <div class="text-muted small text-uppercase fw-bold">Risk Index</div>
+                                    <div class="h4 fw-bold mb-0 text-dark" id="calcIndex">45%</div>
                                 </div>
                             </div>
                             <hr class="my-2">
-                            <div class="small text-muted d-flex align-items-center gap-2" id="inferenceAction">
+                            <div class="small text-muted d-flex align-items-center gap-2" id="calcAction">
                                 <i class="fas fa-lightbulb text-warning"></i>
-                                <span>Suggested Action: Schedule peer tutoring & monitor semester mid-terms.</span>
+                                <span>Suggested Action: Assign peer tutor for challenging coursework and monitor attendance.</span>
                             </div>
                         </div>
                     </div>
@@ -413,387 +471,127 @@
         </div>
     </section>
 
-    <!-- Metric Banner -->
-    <div class="container">
-        <div class="metric-banner">
-            <div class="row text-center g-4">
-                <div class="col-6 col-md-3 metric-item">
-                    <h2>50+</h2>
-                    <p class="text-muted fw-semibold mb-0">Active Students Tracked</p>
-                </div>
-                <div class="col-6 col-md-3 metric-item">
-                    <h2>94.2%</h2>
-                    <p class="text-muted fw-semibold mb-0">Early Detection Accuracy</p>
-                </div>
-                <div class="col-6 col-md-3 metric-item">
-                    <h2>78%</h2>
-                    <p class="text-muted fw-semibold mb-0">Intervention Success Rate</p>
-                </div>
-                <div class="col-6 col-md-3 metric-item">
-                    <h2>&lt; 24h</h2>
-                    <p class="text-muted fw-semibold mb-0">Counsellor Referral Time</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Demo Accounts Access -->
-    <section class="py-5">
-        <div class="container py-4">
-            <div class="card border-0 shadow-sm p-4 p-md-5" style="background: linear-gradient(135deg, #f0fdf4 0%, #e0e7ff 100%); border-radius: 24px;">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-6">
-                        <span class="badge bg-primary px-3 py-2 rounded-pill mb-3">Instant Demo Access</span>
-                        <h3 class="fw-bold text-dark">Try EduGuard with Pre-loaded Roles</h3>
-                        <p class="text-muted mb-0">No registration needed to evaluate. Click any role below to prefill demo credentials and experience the platform immediately.</p>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="row g-2">
-                            <div class="col-sm-6">
-                                <a href="{{ url_for('auth.login') }}?role=admin" class="btn-demo-quick">
-                                    <div class="rounded-circle bg-danger text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-crown"></i>
-                                    </div>
-                                    <div>
-                                        <div class="lh-1">System Admin</div>
-                                        <small class="text-muted">Analytics & Predictions</small>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-sm-6">
-                                <a href="{{ url_for('auth.login') }}?role=teacher" class="btn-demo-quick">
-                                    <div class="rounded-circle bg-primary text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-chalkboard-teacher"></i>
-                                    </div>
-                                    <div>
-                                        <div class="lh-1">Teacher Portal</div>
-                                        <small class="text-muted">Classes & Urgent Alerts</small>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-sm-6">
-                                <a href="{{ url_for('auth.login') }}?role=counsellor" class="btn-demo-quick">
-                                    <div class="rounded-circle bg-warning text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-user-md"></i>
-                                    </div>
-                                    <div>
-                                        <div class="lh-1">Counsellor Desk</div>
-                                        <small class="text-muted">Referrals & Sessions</small>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-sm-6">
-                                <a href="{{ url_for('auth.login') }}?role=student" class="btn-demo-quick">
-                                    <div class="rounded-circle bg-success text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-user-graduate"></i>
-                                    </div>
-                                    <div>
-                                        <div class="lh-1">Student Portal</div>
-                                        <small class="text-muted">Wellness & Resources</small>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section class="py-5 bg-white" id="workflow">
-        <div class="container py-4">
+    <!-- Core System Modules -->
+    <section class="py-5 bg-white border-top border-bottom" id="modules">
+        <div class="container py-2">
             <div class="text-center max-w-700 mx-auto mb-5">
-                <span class="text-primary fw-bold text-uppercase small letter-spacing-1">End-to-End Retention Pipeline</span>
-                <h2 class="fw-bold mt-2 text-dark">How EduGuard Prevents Dropouts</h2>
-                <p class="text-muted">From passive classroom data collection to proactive, compassionate counselling interventions.</p>
+                <span class="badge bg-light text-primary border mb-2 px-2 py-1 small fw-bold">SYSTEM ARCHITECTURE</span>
+                <h3 class="fw-bold text-dark">Institutional Support Modules</h3>
+                <p class="text-muted small">Designed to maintain academic integrity while providing timely pastoral care to students.</p>
             </div>
 
             <div class="row g-4">
-                <div class="col-md-3">
-                    <div class="workflow-card">
-                        <div class="workflow-step-num">1</div>
-                        <div class="feature-icon mx-auto bg-primary-subtle text-primary">
-                            <i class="fas fa-database"></i>
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="rounded-3 p-3 bg-primary-subtle text-primary mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                            <i class="fas fa-table"></i>
                         </div>
-                        <h5 class="fw-bold">Data Aggregation</h5>
-                        <p class="text-muted small mb-0">Continuously ingests attendance, assignment marks, midterm scores, and semester performance.</p>
+                        <h6 class="fw-bold text-dark mb-2">Academic Data Ingestion</h6>
+                        <p class="text-muted small mb-0">Aggregates daily classroom attendance logs, internal assessment quizzes, and semester end examinations.</p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="workflow-card">
-                        <div class="workflow-step-num">2</div>
-                        <div class="feature-icon mx-auto bg-info-subtle text-info">
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="rounded-3 p-3 bg-danger-subtle text-danger mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <h5 class="fw-bold">Ensemble AI Inference</h5>
-                        <p class="text-muted small mb-0">Our machine learning models compute dynamic risk vectors and detect subtle negative inflections.</p>
+                        <h6 class="fw-bold text-dark mb-2">Predictive ML Inference</h6>
+                        <p class="text-muted small mb-0">Applies supervised learning algorithms to compute individualized risk probabilities before final examination cycles.</p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="workflow-card">
-                        <div class="workflow-step-num">3</div>
-                        <div class="feature-icon mx-auto bg-warning-subtle text-warning">
-                            <i class="fas fa-bell"></i>
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="rounded-3 p-3 bg-warning-subtle text-warning-emphasis mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                            <i class="fas fa-clipboard-check"></i>
                         </div>
-                        <h5 class="fw-bold">Automated Alerts</h5>
-                        <p class="text-muted small mb-0">Instant notification to teachers and academic advisors when a student crosses critical risk thresholds.</p>
+                        <h6 class="fw-bold text-dark mb-2">Faculty Referral Queue</h6>
+                        <p class="text-muted small mb-0">Enables lecturers to refer students directly to qualified campus counsellors with timestamped notes.</p>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="workflow-card">
-                        <div class="workflow-step-num">4</div>
-                        <div class="feature-icon mx-auto bg-success-subtle text-success">
-                            <i class="fas fa-hands-helping"></i>
-                        </div>
-                        <h5 class="fw-bold">Care Intervention</h5>
-                        <p class="text-muted small mb-0">Structured referral pipeline pairs students with certified counsellors and curated study plans.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Key Features Bento Grid -->
-    <section class="py-5" id="features">
-        <div class="container py-4">
-            <div class="text-center max-w-700 mx-auto mb-5">
-                <span class="text-primary fw-bold text-uppercase small letter-spacing-1">Feature Ecosystem</span>
-                <h2 class="fw-bold mt-2 text-dark">Built for Educators, Mentors & Students</h2>
-                <p class="text-muted">A comprehensive toolkit designed to foster academic longevity and student mental wellbeing.</p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon bg-danger-subtle text-danger">
-                            <i class="fas fa-radar"></i>
-                        </div>
-                        <h5 class="fw-bold">Predictive Risk Engine</h5>
-                        <p class="text-muted small">Trained on comprehensive student demographic and academic trajectories to forecast dropouts months before exams.</p>
-                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top text-primary small fw-semibold">
-                            <span>RandomForest & Logistic ML</span>
-                            <i class="fas fa-arrow-right ms-auto"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon bg-success-subtle text-success">
+                <div class="col-md-6 col-lg-3">
+                    <div class="module-card">
+                        <div class="rounded-3 p-3 bg-success-subtle text-success mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <h5 class="fw-bold">Non-Stigmatizing UI</h5>
-                        <p class="text-muted small">Students see positive "Academic Wellness Scores" rather than punitive risk tags, protecting dignity and encouraging self-improvement.</p>
-                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top text-primary small fw-semibold">
-                            <span>Compassionate Design</span>
-                            <i class="fas fa-arrow-right ms-auto"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon bg-primary-subtle text-primary">
-                            <i class="fas fa-comments-dollar fa-comments"></i>
-                        </div>
-                        <h5 class="fw-bold">Counselling Hub</h5>
-                        <p class="text-muted small">Integrated case management with private notes, session scheduling, and outcome logs for institution counsellors.</p>
-                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top text-primary small fw-semibold">
-                            <span>Confidential Records</span>
-                            <i class="fas fa-arrow-right ms-auto"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon bg-warning-subtle text-warning">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <h5 class="fw-bold">AI Support Companion</h5>
-                        <p class="text-muted small">Interactive 24/7 student chat companion providing personalized study roadmaps, exam motivation, and wellness advice.</p>
-                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top text-primary small fw-semibold">
-                            <span>Natural Language AI</span>
-                            <i class="fas fa-arrow-right ms-auto"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon bg-info-subtle text-info">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                        <h5 class="fw-bold">Department Analytics</h5>
-                        <p class="text-muted small">Department heads and deans analyze macro-level trends, semester bottlenecks, and cohort risk heatmaps.</p>
-                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top text-primary small fw-semibold">
-                            <span>Institutional Insights</span>
-                            <i class="fas fa-arrow-right ms-auto"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card">
-                        <div class="feature-icon bg-secondary-subtle text-dark">
-                            <i class="fas fa-file-export"></i>
-                        </div>
-                        <h5 class="fw-bold">Automated Interventions</h5>
-                        <p class="text-muted small">System automatically triggers actionable recommendations like remedial classes, study groups, or mentor check-ins.</p>
-                        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top text-primary small fw-semibold">
-                            <span>Actionable Prescriptions</span>
-                            <i class="fas fa-arrow-right ms-auto"></i>
-                        </div>
+                        <h6 class="fw-bold text-dark mb-2">Student Wellness Score</h6>
+                        <p class="text-muted small mb-0">Displays positive, non-stigmatizing wellness progress out of 100 to promote student morale and self-care.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Role Portals Showcase -->
-    <section class="py-5 bg-white" id="roles">
-        <div class="container py-4">
-            <div class="text-center max-w-700 mx-auto mb-5">
-                <span class="text-primary fw-bold text-uppercase small letter-spacing-1">Tailored Experiences</span>
-                <h2 class="fw-bold mt-2 text-dark">Dedicated Dashboards for Every Stakeholder</h2>
-            </div>
-
-            <div class="row g-4 align-items-center">
-                <div class="col-lg-4">
-                    <div class="d-flex flex-column gap-3">
-                        <div class="role-pill active" onclick="switchRole('admin')">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle bg-danger text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-crown"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-0">System Administrator</h6>
-                                    <small class="text-muted">Batch ML execution, user control</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="role-pill" onclick="switchRole('teacher')">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle bg-primary text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-chalkboard-teacher"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-0">Teacher & Faculty</h6>
-                                    <small class="text-muted">Class tracking, student alerts</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="role-pill" onclick="switchRole('counsellor')">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle bg-warning text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-user-md"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-0">Student Counsellor</h6>
-                                    <small class="text-muted">Referral queue, session notes</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="role-pill" onclick="switchRole('student')">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle bg-success text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-user-graduate"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-0">Student Member</h6>
-                                    <small class="text-muted">Wellness score, study recommendations</small>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Academic Departments Monitored -->
+    <section class="py-5" id="departments">
+        <div class="container py-2">
+            <div class="p-4 bg-white rounded-3 border">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3 pb-2 border-bottom">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-building text-primary me-2"></i>Monitored Academic Departments</h5>
+                        <small class="text-muted">Current cohort distribution across 5 core engineering disciplines</small>
                     </div>
+                    <span class="badge bg-light text-dark border">50+ Active Students</span>
                 </div>
-
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-lg p-4 bg-light" id="roleDisplayCard" style="border-radius: 24px;">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold text-dark mb-0" id="roleTitle">Administrator Command Center</h4>
-                            <span class="badge bg-primary text-white px-3 py-2 rounded-pill" id="roleBadge">Superuser Access</span>
-                        </div>
-                        <p class="text-muted" id="roleDesc">
-                            Provides deep visibility into university-wide retention statistics, execution of automated scikit-learn batch predictions across all 50+ students, and drill-down assessment audit logs.
-                        </p>
-                        <div class="row g-3 mt-2" id="roleFeatures">
-                            <div class="col-md-6">
-                                <div class="p-3 bg-white rounded-3 border">
-                                    <div class="fw-bold text-dark"><i class="fas fa-bolt text-warning me-2"></i>One-Click Batch Prediction</div>
-                                    <small class="text-muted">Run machine learning pipelines across the entire student roster.</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="p-3 bg-white rounded-3 border">
-                                    <div class="fw-bold text-dark"><i class="fas fa-chart-line text-primary me-2"></i>Department Benchmarks</div>
-                                    <small class="text-muted">Compare Computer Science, Mechanical, and Civil cohort trends.</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
-                            <span class="small text-muted">Ready to test this role?</span>
-                            <a href="{{ url_for('auth.login') }}?role=admin" id="roleActionBtn" class="btn btn-primary px-4 fw-bold">Sign In as Admin</a>
-                        </div>
-                    </div>
+                <div class="row g-3 text-center">
+                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Computer Science</div><small class="text-muted">14 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Electronics & Comm.</div><small class="text-muted">11 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Mechanical</div><small class="text-muted">10 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Civil Engineering</div><small class="text-muted">8 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Electrical</div><small class="text-muted">7 Students</small></div></div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-5 bg-light" id="faq">
-        <div class="container py-4">
-            <div class="text-center max-w-700 mx-auto mb-5">
-                <span class="text-primary fw-bold text-uppercase small letter-spacing-1">Got Questions?</span>
-                <h2 class="fw-bold mt-2 text-dark">Frequently Asked Questions</h2>
+    <section class="py-5 bg-white border-top" id="faq">
+        <div class="container py-2">
+            <div class="text-center max-w-700 mx-auto mb-4">
+                <h4 class="fw-bold text-dark">Frequently Asked Academic Questions</h4>
+                <p class="text-muted small">Standard operating procedures regarding data privacy and counselling intervention.</p>
             </div>
 
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="accordion" id="faqAccordion">
-                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm overflow-hidden">
+                    <div class="accordion" id="academicFaq">
+                        <div class="accordion-item border mb-2 rounded-2 overflow-hidden">
                             <h2 class="accordion-header">
-                                <button class="accordion-button fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                    How does the AI model determine dropout risk?
+                                <button class="accordion-button fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                                    How are risk scores computed for enrolled students?
                                 </button>
                             </h2>
-                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#academicFaq">
                                 <div class="accordion-body text-muted small">
-                                    The system evaluates multi-factorial indicators including attendance rate, internal assessment trends, historical GPA trajectory, and recent class absences. It uses trained classification models (Random Forest and Logistic Regression) calibrated against academic historical benchmarks.
+                                    The model processes multiple academic signals including attendance trends over 30 days, internal quiz results, semester grade point average (GPA), and historical backlogs to compute an objective risk probability.
                                 </div>
                             </div>
                         </div>
 
-                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm overflow-hidden">
+                        <div class="accordion-item border mb-2 rounded-2 overflow-hidden">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                    Is student mental health and dignity preserved?
+                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                                    Can students see if they are categorized as high risk?
                                 </button>
                             </h2>
-                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="q2" class="accordion-collapse collapse" data-bs-parent="#academicFaq">
                                 <div class="accordion-body text-muted small">
-                                    Yes! We strictly prohibit negative stigmatization. Students are presented with an encouraging "Wellness Score" out of 100 alongside proactive study tips. Only authorized faculty and professional counsellors have access to the risk intervention queue.
+                                    To avoid stress and stigmatization, students see a positive "Academic Wellness Score" out of 100 alongside proactive study suggestions. Detailed risk levels are exclusively available to authorized department heads, teachers, and counsellors.
                                 </div>
                             </div>
                         </div>
 
-                        <div class="accordion-item border-0 mb-3 rounded-3 shadow-sm overflow-hidden">
+                        <div class="accordion-item border mb-2 rounded-2 overflow-hidden">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                    Can we upload custom student datasets?
+                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+                                    Are counselling session records private?
                                 </button>
                             </h2>
-                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div id="q3" class="accordion-collapse collapse" data-bs-parent="#academicFaq">
                                 <div class="accordion-body text-muted small">
-                                    Yes, the admin interface allows institutional staff to ingest CSV datasets, trigger automated model retraining, and re-score the entire student cohort dynamically.
+                                    Yes. Detailed clinical counselling session notes and personal student disclosures are restricted strictly to designated counsellor accounts and are not visible in general faculty rosters.
                                 </div>
                             </div>
                         </div>
@@ -803,72 +601,69 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-5 bg-dark text-white">
+    <!-- Academic Footer -->
+    <footer>
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="brand-icon-box" style="width: 32px; height: 32px; font-size: 1rem;">
+                        <div class="brand-badge" style="width: 32px; height: 32px; font-size: 1rem;">
                             <i class="fas fa-graduation-cap"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-0">EduGuard AI</h5>
+                        <h6 class="fw-bold text-white mb-0">EduGuard Academic System</h6>
                     </div>
-                    <p class="text-white-50 small">Empowering higher education institutions to proactively identify academic vulnerability, provide timely pastoral support, and ensure every student finishes strong.</p>
+                    <p class="text-white-50 small mb-0">College Student Early Warning, Retention & Pastoral Mentorship Portal. Designed for department faculties, student advisors, and university counselling desks.</p>
                 </div>
                 <div class="col-lg-2 col-6">
-                    <h6 class="fw-bold text-white mb-3">Platform</h6>
-                    <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2">
-                        <li><a href="#simulator" class="text-white-50 text-decoration-none">AI Simulator</a></li>
-                        <li><a href="#features" class="text-white-50 text-decoration-none">Features</a></li>
-                        <li><a href="#roles" class="text-white-50 text-decoration-none">Role Portals</a></li>
-                        <li><a href="{{ url_for('auth.login') }}" class="text-white-50 text-decoration-none">Log In</a></li>
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Portals</h6>
+                    <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2 mb-0">
+                        <li><a href="{{ url_for('auth.login') }}?role=admin">Admin Desk</a></li>
+                        <li><a href="{{ url_for('auth.login') }}?role=teacher">Faculty Portal</a></li>
+                        <li><a href="{{ url_for('auth.login') }}?role=counsellor">Counsellor Queue</a></li>
+                        <li><a href="{{ url_for('auth.login') }}?role=student">Student Hub</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-6">
-                    <h6 class="fw-bold text-white mb-3">Roles</h6>
-                    <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2">
-                        <li><a href="{{ url_for('auth.login') }}?role=admin" class="text-white-50 text-decoration-none">Admin Dashboard</a></li>
-                        <li><a href="{{ url_for('auth.login') }}?role=teacher" class="text-white-50 text-decoration-none">Teacher Console</a></li>
-                        <li><a href="{{ url_for('auth.login') }}?role=counsellor" class="text-white-50 text-decoration-none">Counsellor Desk</a></li>
-                        <li><a href="{{ url_for('auth.login') }}?role=student" class="text-white-50 text-decoration-none">Student Wellness</a></li>
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Resources</h6>
+                    <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2 mb-0">
+                        <li><a href="#calculator">Model Simulator</a></li>
+                        <li><a href="#departments">Departments</a></li>
+                        <li><a href="#modules">Architecture</a></li>
+                        <li><a href="#faq">Student FAQ</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3">
-                    <h6 class="fw-bold text-white mb-3">Institutional Status</h6>
-                    <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.08);">
-                        <div class="d-flex align-items-center gap-2 text-success small fw-bold mb-1">
-                            <span class="pulse-dot success"></span>
-                            <span>All Systems Operational</span>
-                        </div>
-                        <small class="text-white-50 d-block">ML Predictor: <strong class="text-white">v2.4 Online</strong></small>
-                        <small class="text-white-50 d-block">Database: <strong class="text-white">50+ Active Records</strong></small>
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">System Status</h6>
+                    <div class="p-3 rounded-2" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <small class="text-success d-block fw-bold mb-1"><i class="fas fa-check-circle me-1"></i> Campus Server Online</small>
+                        <small class="text-white-50 d-block">ML Predictor: <span class="text-white">Active</span></small>
+                        <small class="text-white-50 d-block">Database: <span class="text-white">50+ Seeded Students</span></small>
                     </div>
                 </div>
             </div>
-            <hr class="my-4 border-secondary">
+            <hr class="my-4 border-secondary opacity-50">
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-white-50">
-                <span>&copy; 2026 EduGuard Systems. All rights reserved.</span>
-                <span>Designed for Academic Success & High Student Retention.</span>
+                <span>&copy; Academic Year 2025-26 EduGuard. Department of Student Welfare.</span>
+                <span>Academic Retention & Mentorship System.</span>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Interactive Live Simulator Logic
+        // Risk Assessment Calculator Logic
         const inputAttendance = document.getElementById('inputAttendance');
         const inputGPA = document.getElementById('inputGPA');
         const inputSemester = document.getElementById('inputSemester');
         const inputBacklogs = document.getElementById('inputBacklogs');
         const valAttendance = document.getElementById('valAttendance');
         const valGPA = document.getElementById('valGPA');
-        const inferenceBadge = document.getElementById('inferenceBadge');
-        const inferenceScore = document.getElementById('inferenceScore');
-        const inferenceAction = document.getElementById('inferenceAction');
-        const inferenceBox = document.getElementById('inferenceBox');
+        const calcCategory = document.getElementById('calcCategory');
+        const calcIndex = document.getElementById('calcIndex');
+        const calcAction = document.getElementById('calcAction');
+        const calcResultBox = document.getElementById('calcResultBox');
 
-        function updateSimulator() {
+        function updateCalc() {
             const att = parseFloat(inputAttendance.value);
             const gpa = parseFloat(inputGPA.value);
             const backlogs = parseInt(inputBacklogs.value);
@@ -876,104 +671,36 @@
             valAttendance.innerText = att + '%';
             valGPA.innerText = gpa.toFixed(1);
 
-            // Realistic heuristic approximating our trained ML model
             let risk = (100 - att) * 0.55 + ((10 - gpa) * 10) * 0.35 + (backlogs * 8);
-            risk = Math.max(5, Math.min(96, Math.round(risk)));
+            risk = Math.max(5, Math.min(95, Math.round(risk)));
 
-            inferenceScore.innerText = risk + '%';
+            calcIndex.innerText = risk + '%';
 
             if (risk >= 65) {
-                inferenceBadge.innerText = 'High Risk';
-                inferenceBadge.style.color = '#dc2626';
-                inferenceBox.style.borderColor = '#fca5a5';
-                inferenceBox.style.backgroundColor = '#fef2f2';
-                inferenceAction.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i><span><strong>Immediate Intervention:</strong> Notify academic advisor & assign remedial counselling.</span>';
+                calcCategory.innerText = 'High Risk';
+                calcCategory.style.color = '#dc2626';
+                calcResultBox.style.borderColor = '#fca5a5';
+                calcResultBox.style.backgroundColor = '#fef2f2';
+                calcAction.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i><span><strong>Immediate Referral:</strong> Notify academic advisor & schedule formal counselling.</span>';
             } else if (risk >= 40) {
-                inferenceBadge.innerText = 'Moderate Risk';
-                inferenceBadge.style.color = '#d97706';
-                inferenceBox.style.borderColor = '#fde68a';
-                inferenceBox.style.backgroundColor = '#fffbeb';
-                inferenceAction.innerHTML = '<i class="fas fa-lightbulb text-warning"></i><span><strong>Suggested Action:</strong> Schedule peer tutoring & monitor semester mid-terms.</span>';
+                calcCategory.innerText = 'Moderate Risk';
+                calcCategory.style.color = '#d97706';
+                calcResultBox.style.borderColor = '#fde68a';
+                calcResultBox.style.backgroundColor = '#fffbeb';
+                calcAction.innerHTML = '<i class="fas fa-lightbulb text-warning"></i><span><strong>Suggested Action:</strong> Assign peer tutor for challenging coursework and monitor attendance.</span>';
             } else {
-                inferenceBadge.innerText = 'Low Risk (Healthy)';
-                inferenceBadge.style.color = '#059669';
-                inferenceBox.style.borderColor = '#a7f3d0';
-                inferenceBox.style.backgroundColor = '#ecfdf5';
-                inferenceAction.innerHTML = '<i class="fas fa-check-circle text-success"></i><span><strong>Status Good:</strong> Academic performance is stable. Continue self-paced study roadmap.</span>';
+                calcCategory.innerText = 'Low Risk (Healthy)';
+                calcCategory.style.color = '#059669';
+                calcResultBox.style.borderColor = '#a7f3d0';
+                calcResultBox.style.backgroundColor = '#ecfdf5';
+                calcAction.innerHTML = '<i class="fas fa-check-circle text-success"></i><span><strong>Standing Good:</strong> Academic performance is stable. Continue standard semester track.</span>';
             }
         }
 
-        inputAttendance.addEventListener('input', updateSimulator);
-        inputGPA.addEventListener('input', updateSimulator);
-        inputSemester.addEventListener('change', updateSimulator);
-        inputBacklogs.addEventListener('change', updateSimulator);
-
-        // Role Showcase Switcher
-        const rolesData = {
-            admin: {
-                title: 'Administrator Command Center',
-                badge: 'Superuser Access',
-                desc: 'Provides complete institutional visibility into university-wide retention statistics, execution of automated batch ML predictions across all 50+ students, and assessment audit logs.',
-                btnText: 'Sign In as Admin',
-                btnLink: "{{ url_for('auth.login') }}?role=admin",
-                f1: { title: 'One-Click Batch Prediction', desc: 'Trigger scikit-learn models across student cohorts simultaneously.' },
-                f2: { title: 'Department Benchmarks', desc: 'Compare Computer Science, Electronics, and Mechanical performance.' }
-            },
-            teacher: {
-                title: 'Teacher & Faculty Dashboard',
-                badge: 'Classroom Operations',
-                desc: 'Enables lecturers to inspect high-risk alerts in real-time, log internal marks, record daily student attendance, and refer struggling pupils to pastoral counsellors.',
-                btnText: 'Sign In as Teacher',
-                btnLink: "{{ url_for('auth.login') }}?role=teacher",
-                f1: { title: 'Early Warning Flags', desc: 'Highlighted alerts when student attendance or grades dip sharply.' },
-                f2: { title: 'Instant Referral Dispatch', desc: '1-click confidential referral to campus counselling staff.' }
-            },
-            counsellor: {
-                title: 'Counsellor & Mental Health Desk',
-                badge: 'Intervention Care',
-                desc: 'Dedicated clinical workflow to manage incoming teacher referrals, conduct private 1-on-1 sessions, log confidential progress notes, and track rehabilitation milestones.',
-                btnText: 'Sign In as Counsellor',
-                btnLink: "{{ url_for('auth.login') }}?role=counsellor",
-                f1: { title: 'Priority Referral Queue', desc: 'Triage student cases sorted by urgency and risk score.' },
-                f2: { title: 'Session Tracker', desc: 'Maintain timestamped consultation records and care follow-ups.' }
-            },
-            student: {
-                title: 'Student Wellness Portal',
-                badge: 'Personal Growth',
-                desc: 'A safe, empowering hub where students review their overall Academic Wellness Score, access personalized study material, schedule mentorship, or talk with the 24/7 AI Companion.',
-                btnText: 'Sign In as Student',
-                btnLink: "{{ url_for('auth.login') }}?role=student",
-                f1: { title: 'Academic Wellness Score', desc: 'Non-punitive health metric tracking current semester health.' },
-                f2: { title: 'AI Study Assistant', desc: 'Conversational support to overcome stress and exam anxiety.' }
-            }
-        };
-
-        function switchRole(roleKey) {
-            document.querySelectorAll('.role-pill').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            const data = rolesData[roleKey];
-            document.getElementById('roleTitle').innerText = data.title;
-            document.getElementById('roleBadge').innerText = data.badge;
-            document.getElementById('roleDesc').innerText = data.desc;
-            document.getElementById('roleActionBtn').innerText = data.btnText;
-            document.getElementById('roleActionBtn').href = data.btnLink;
-
-            document.getElementById('roleFeatures').innerHTML = `
-                <div class="col-md-6">
-                    <div class="p-3 bg-white rounded-3 border">
-                        <div class="fw-bold text-dark"><i class="fas fa-check text-primary me-2"></i>${data.f1.title}</div>
-                        <small class="text-muted">${data.f1.desc}</small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="p-3 bg-white rounded-3 border">
-                        <div class="fw-bold text-dark"><i class="fas fa-check text-primary me-2"></i>${data.f2.title}</div>
-                        <small class="text-muted">${data.f2.desc}</small>
-                    </div>
-                </div>
-            `;
-        }
+        inputAttendance.addEventListener('input', updateCalc);
+        inputGPA.addEventListener('input', updateCalc);
+        inputSemester.addEventListener('change', updateCalc);
+        inputBacklogs.addEventListener('change', updateCalc);
     </script>
 </body>
 </html>
