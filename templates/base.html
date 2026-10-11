@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EduGuard - AI Early Warning System{% endblock %}</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Lexend (Reading Accessibility) & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5 & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,75 +17,95 @@
 
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --primary-light: #818cf8;
-            --primary-subtle: #e0e7ff;
-            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            --sidebar-gradient: linear-gradient(180deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
+            /* Warm Earthy Teal & Amber Palette */
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #2dd4bf;
+            --primary-subtle: #ccfbf1;
+            --accent-amber: #f59e0b;
+            --accent-amber-light: #fef3c7;
+            --accent-coral: #f43f5e;
+            --accent-coral-light: #ffe4e6;
+            --primary-gradient: linear-gradient(135deg, #0d9488 0%, #059669 100%);
+            --sidebar-gradient: linear-gradient(180deg, #112922 0%, #16352c 50%, #1b3f35 100%);
             --sidebar-width: 260px;
-            --surface-bg: #f8fafc;
-            --card-border: rgba(226, 232, 240, 0.8);
-            --font-heading: 'Outfit', sans-serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
-            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-            --shadow-elevated: 0 20px 30px -10px rgba(79, 70, 229, 0.15);
+            --surface-bg: #faf9f5;
+            --card-border: #e7e5df;
+            --font-heading: 'Lexend', -apple-system, sans-serif;
+            --font-body: 'Lexend', -apple-system, sans-serif;
+            --shadow-subtle: 0 3px 6px -1px rgba(13, 148, 136, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+            --shadow-card: 0 8px 24px -4px rgba(28, 45, 39, 0.06), 0 4px 8px -2px rgba(28, 45, 39, 0.03);
+            --shadow-elevated: 0 16px 28px -6px rgba(13, 148, 136, 0.16);
+        }
+
+        /* Accessibility focus rings */
+        *:focus-visible {
+            outline: 3px solid #0d9488 !important;
+            outline-offset: 2px !important;
         }
 
         body {
             font-family: var(--font-body);
             background-color: var(--surface-bg);
-            color: #1e293b;
+            color: #1c2d27;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+            line-height: 1.6;
+        }
+
+        /* Accessibility text size mode */
+        body.accessible-large-text {
+            font-size: 1.12rem;
+            line-height: 1.75;
         }
 
         h1, h2, h3, h4, h5, h6, .brand-font {
             font-family: var(--font-heading);
             letter-spacing: -0.02em;
+            color: #132a22;
         }
 
-        /* Glassmorphic Navbar */
+        /* Glassmorphic Warm Navbar */
         .navbar-custom {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.88);
-            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            background: rgba(254, 253, 250, 0.94);
+            border-bottom: 2px solid var(--card-border);
             position: fixed;
             width: 100%;
             z-index: 1040;
             top: 0;
-            height: 70px;
+            height: 72px;
             transition: all 0.3s ease;
         }
 
         .navbar-brand {
             font-weight: 800;
             font-size: 1.35rem;
-            color: #0f172a !important;
+            color: #132a22 !important;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .brand-icon-box {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background: var(--primary-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+            font-size: 1.15rem;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
         }
 
-        /* Modern Sidebar */
+        /* Warm Evergreen Sidebar */
         .sidebar {
             height: 100vh;
             width: var(--sidebar-width);
@@ -93,15 +113,15 @@
             top: 0;
             left: 0;
             background: var(--sidebar-gradient);
-            padding-top: 82px;
+            padding-top: 84px;
             padding-bottom: 24px;
-            color: #94a3b8;
+            color: #a7c4bc;
             z-index: 1030;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 4px 0 20px rgba(17, 41, 34, 0.15);
         }
 
         .sidebar-nav {
@@ -111,10 +131,10 @@
         }
 
         .sidebar-section-title {
-            font-size: 0.72rem;
+            font-size: 0.74rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #64748b;
+            color: #759a90;
             font-weight: 700;
             padding: 12px 14px 6px;
         }
@@ -123,27 +143,27 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 16px;
+            padding: 12px 16px;
             text-decoration: none;
-            font-size: 0.92rem;
+            font-size: 0.94rem;
             font-weight: 500;
-            color: #cbd5e1;
-            border-radius: 10px;
-            margin-bottom: 4px;
+            color: #d1e3de;
+            border-radius: 12px;
+            margin-bottom: 5px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar a i {
-            font-size: 1.05rem;
-            width: 22px;
+            font-size: 1.1rem;
+            width: 24px;
             text-align: center;
-            color: #94a3b8;
+            color: #9cbdb5;
             transition: color 0.2s ease;
         }
 
         .sidebar a:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.09);
             transform: translateX(4px);
         }
 
@@ -152,10 +172,10 @@
         }
 
         .sidebar a.active, .sidebar a[data-active="true"] {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
             color: #ffffff;
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.45);
         }
 
         .sidebar a.active i {
@@ -206,10 +226,10 @@
             padding: 24px;
         }
 
-        /* Stat Metric Cards */
+        /* Stat Metric Cards - Warm, High-Contrast Palette */
         .metric-card {
             position: relative;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 24px;
             color: #ffffff;
             overflow: hidden;
@@ -222,22 +242,22 @@
             transform: translateY(-4px);
         }
 
-        .metric-card.gradient-indigo {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.35);
+        .metric-card.gradient-indigo, .metric-card.gradient-teal {
+            background: linear-gradient(135deg, #0d9488 0%, #047857 100%);
+            box-shadow: 0 10px 20px -5px rgba(13, 148, 136, 0.35);
         }
 
-        .metric-card.gradient-danger {
+        .metric-card.gradient-danger, .metric-card.gradient-coral {
             background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
             box-shadow: 0 10px 20px -5px rgba(225, 29, 72, 0.35);
         }
 
-        .metric-card.gradient-warning {
+        .metric-card.gradient-warning, .metric-card.gradient-amber {
             background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
             box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.35);
         }
 
-        .metric-card.gradient-success {
+        .metric-card.gradient-success, .metric-card.gradient-emerald {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.35);
         }
@@ -245,8 +265,8 @@
         .metric-icon-bubble {
             width: 48px;
             height: 48px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.22);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -254,79 +274,86 @@
             font-size: 1.4rem;
         }
 
-        /* Soft Badges */
+        /* Accessible Soft Badges */
         .badge-pill {
-            padding: 6px 12px;
+            padding: 7px 14px;
             border-radius: 9999px;
-            font-weight: 600;
-            font-size: 0.78rem;
+            font-weight: 700;
+            font-size: 0.82rem;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
         }
 
         .badge-low {
             background-color: #ecfdf5 !important;
             color: #065f46 !important;
-            border: 1px solid #a7f3d0;
+            border: 1.5px solid #a7f3d0;
         }
 
         .badge-medium {
             background-color: #fffbeb !important;
             color: #92400e !important;
-            border: 1px solid #fde68a;
+            border: 1.5px solid #fde68a;
         }
 
         .badge-high {
             background-color: #fef2f2 !important;
             color: #991b1b !important;
-            border: 1px solid #fecaca;
+            border: 1.5px solid #fecaca;
         }
 
-        /* Buttons & Forms */
+        /* Accessible Buttons & Forms with Large Touch Targets */
         .btn {
-            border-radius: 10px;
-            padding: 9px 18px;
+            border-radius: 12px;
+            padding: 10px 20px;
             font-weight: 600;
-            font-size: 0.92rem;
+            font-size: 0.94rem;
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             transition: all 0.2s ease;
         }
 
         .btn-primary {
             background: var(--primary-gradient);
             border: none;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
-            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+            background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+            box-shadow: 0 6px 18px rgba(13, 148, 136, 0.45);
             transform: translateY(-1px);
         }
 
         .btn-outline-primary {
             color: var(--primary);
-            border-color: #c7d2fe;
+            border: 1.5px solid #99f6e4;
             background: #ffffff;
         }
 
         .btn-outline-primary:hover {
-            background: #eef2ff;
+            background: #ccfbf1;
             color: var(--primary-dark);
             border-color: var(--primary);
         }
 
         .form-control, .form-select {
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            padding: 10px 14px;
-            font-size: 0.94rem;
+            border-radius: 12px;
+            border: 1.5px solid #cbd5e1;
+            padding: 11px 16px;
+            font-size: 0.96rem;
+            min-height: 44px;
             transition: all 0.2s ease;
         }
 
         .form-control:focus, .form-select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
         }
 
         /* Tables */
@@ -431,20 +458,25 @@
                 {% endif %}
                 <a class="navbar-brand" href="/">
                     <div class="brand-icon-box">
-                        <i class="fas fa-graduation-cap"></i>
+                        <i class="fas fa-seedling"></i>
                     </div>
                     <span>Edu<span style="color: var(--primary);">Guard</span></span>
                 </a>
-                <span class="badge bg-light text-primary border ms-2 d-none d-sm-inline-block px-2 py-1" style="font-size: 0.72rem; font-weight: 700;">
-                    <i class="fas fa-university me-1"></i>Academic Portal
+                <span class="badge bg-light text-success border ms-2 d-none d-sm-inline-block px-2 py-1" style="font-size: 0.75rem; font-weight: 700; background-color: var(--primary-subtle) !important; color: var(--primary-dark) !important;">
+                    🌱 Student Care & Mentorship
                 </span>
             </div>
 
-            <div class="d-flex align-items-center gap-3 ms-auto">
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <!-- Accessibility Text Size Toggle -->
+                <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 border d-flex align-items-center gap-1" id="btnTextSize" onclick="toggleTextSize()" title="Accessibility: Toggle Larger Font Size" style="font-size: 0.8rem; min-height: 34px;">
+                    <i class="fas fa-eye text-primary"></i> <span class="d-none d-md-inline">Reading Mode</span> <strong>Aa</strong>
+                </button>
+
                 {% if current_user.is_authenticated %}
                 <div class="d-none d-md-flex align-items-center bg-light px-3 py-1 rounded-pill border">
                     <span class="pulse-dot success me-2"></span>
-                    <small class="text-muted fw-semibold">Academic Session Active</small>
+                    <small class="text-muted fw-semibold">Session Active</small>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
@@ -460,8 +492,8 @@
                     </a>
                 </div>
                 {% else %}
-                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-sm px-3">Campus Login</a>
-                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm px-3">Register</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-sm px-3">Sign In</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm px-3">Join Hub</a>
                 {% endif %}
             </div>
         </div>
@@ -579,6 +611,33 @@
             sidebarToggle.addEventListener('click', () => {
                 document.getElementById('sidebar').classList.toggle('show');
             });
+        }
+
+        // Accessibility Reading Mode
+        function toggleTextSize() {
+            document.body.classList.toggle('accessible-large-text');
+            const isActive = document.body.classList.contains('accessible-large-text');
+            localStorage.setItem('eduguard_accessible_text', isActive ? 'true' : 'false');
+            const btn = document.getElementById('btnTextSize');
+            if (btn) {
+                if (isActive) {
+                    btn.classList.add('btn-primary');
+                    btn.classList.remove('btn-outline-secondary');
+                } else {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-secondary');
+                }
+            }
+        }
+
+        // Restore user accessibility preference
+        if (localStorage.getItem('eduguard_accessible_text') === 'true') {
+            document.body.classList.add('accessible-large-text');
+            const btn = document.getElementById('btnTextSize');
+            if (btn) {
+                btn.classList.add('btn-primary');
+                btn.classList.remove('btn-outline-secondary');
+            }
         }
     </script>
     {% block scripts %}{% endblock %}

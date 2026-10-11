@@ -3,56 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduGuard - Student Early Warning & Retention System</title>
+    <title>EduGuard - Friendly Student Support & Academic Care</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Lexend (Designed for reading comfort & accessibility) & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #1e3a8a;
-            --primary-accent: #2563eb;
-            --primary-subtle: #dbeafe;
-            --navy-dark: #0f172a;
-            --slate-border: #e2e8f0;
-            --bg-academic: #f8fafc;
-            --font-heading: 'Outfit', sans-serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
+            /* Warm Earthy Teal & Amber Palette */
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #2dd4bf;
+            --primary-subtle: #ccfbf1;
+            
+            --amber-warm: #f59e0b;
+            --amber-subtle: #fef3c7;
+            
+            --coral-soft: #f43f5e;
+            --coral-subtle: #ffe4e6;
+            
+            --emerald-soft: #10b981;
+            --emerald-subtle: #d1fae5;
+
+            --bg-warm: #faf9f5;
+            --card-surface: #ffffff;
+            --border-soft: #e7e5df;
+            
+            --text-heading: #132a22;
+            --text-body: #2d3e38;
+            --text-muted: #64746f;
+            
+            --font-main: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Accessibility focus outline */
+        *:focus-visible {
+            outline: 3px solid #0d9488 !important;
+            outline-offset: 3px !important;
         }
 
         body {
-            font-family: var(--font-body);
-            background-color: var(--bg-academic);
-            color: #1e293b;
+            font-family: var(--font-main);
+            background-color: var(--bg-warm);
+            color: var(--text-body);
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.01em;
+            line-height: 1.65;
+        }
+
+        /* Large text mode toggle */
+        body.accessible-large-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-heading);
-            letter-spacing: -0.01em;
-            color: #0f172a;
+            color: var(--text-heading);
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
-        /* Top Institutional Bar */
-        .inst-header-strip {
-            background-color: #0f172a;
-            color: #cbd5e1;
-            font-size: 0.78rem;
-            padding: 7px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        /* Friendly Top Announcement Strip */
+        .friendly-top-strip {
+            background-color: #132a24;
+            color: #d1e3de;
+            font-size: 0.85rem;
+            padding: 8px 0;
         }
 
-        /* Main Navbar */
-        .navbar-academic {
-            background-color: #ffffff;
-            border-bottom: 2px solid #e2e8f0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        /* Warm Accessible Navbar */
+        .navbar-friendly {
+            background-color: rgba(254, 253, 250, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid var(--border-soft);
             padding: 14px 0;
             position: sticky;
             top: 0;
@@ -60,260 +88,330 @@
         }
 
         .brand-badge {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.25);
+            font-size: 1.3rem;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
         }
 
-        /* Academic Hero */
-        .academic-hero {
-            background: linear-gradient(180deg, #f1f5f9 0%, #ffffff 100%);
-            border-bottom: 1px solid var(--slate-border);
-            padding: 60px 0 50px;
+        /* Friendly Hero */
+        .friendly-hero {
+            background: radial-gradient(circle at 10% 20%, rgba(204, 251, 241, 0.5) 0%, rgba(250, 249, 245, 1) 70%);
+            padding: 55px 0 45px;
+            border-bottom: 1px solid var(--border-soft);
         }
 
-        .portal-entry-card {
+        .tag-pill {
+            background-color: var(--primary-subtle);
+            color: var(--primary-dark);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #99f6e4;
+        }
+
+        /* Friendly Portal Role Cards */
+        .portal-card {
             background: #ffffff;
-            border: 1px solid var(--slate-border);
-            border-radius: 14px;
+            border: 2px solid var(--border-soft);
+            border-radius: 20px;
             padding: 22px;
-            height: 100%;
-            transition: all 0.2s ease;
             text-decoration: none;
-            color: inherit;
+            color: var(--text-body);
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            height: 100%;
+            box-shadow: 0 4px 12px rgba(28, 45, 39, 0.04);
         }
 
-        .portal-entry-card:hover {
-            transform: translateY(-3px);
-            border-color: #93c5fd;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1);
-            color: inherit;
+        .portal-card:hover {
+            transform: translateY(-4px);
+            border-color: #0d9488;
+            box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.18);
+            color: var(--text-body);
         }
 
-        .portal-entry-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+        .role-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            margin-bottom: 14px;
+            font-size: 1.35rem;
+            margin-bottom: 12px;
         }
 
-        /* Calculator / Simulator Box */
-        .academic-calc-box {
+        /* Accessible Interactive Calculator */
+        .calc-wrapper {
             background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-            padding: 28px;
+            border: 2px solid #cbd5e1;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -5px rgba(28, 45, 39, 0.08);
+            padding: 30px;
         }
 
-        /* System Module Cards */
-        .module-card {
+        .form-range::-webkit-slider-thumb {
+            background: #0d9488;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .form-range::-moz-range-thumb {
+            background: #0d9488;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* Friendly Pillar Cards */
+        .pillar-card {
             background: #ffffff;
-            border: 1px solid var(--slate-border);
-            border-radius: 14px;
+            border: 2px solid var(--border-soft);
+            border-radius: 20px;
             padding: 26px;
             height: 100%;
             transition: all 0.2s ease;
         }
 
-        .module-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.05);
+        .pillar-card:hover {
+            border-color: #99f6e4;
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.08);
         }
 
-        /* Badges */
-        .academic-tag {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Demo Pill Button */
-        .demo-persona-card {
-            border: 1px solid #e2e8f0;
-            background: white;
-            border-radius: 12px;
+        /* Accessible Demo Shortcuts */
+        .demo-pill {
+            background: #ffffff;
+            border: 2px solid var(--border-soft);
+            border-radius: 16px;
             padding: 14px 18px;
             display: flex;
             align-items: center;
             gap: 14px;
             text-decoration: none;
-            color: #1e293b;
+            color: var(--text-body);
             transition: all 0.2s ease;
         }
 
-        .demo-persona-card:hover {
-            background: #f8fafc;
-            border-color: #93c5fd;
+        .demo-pill:hover {
+            border-color: #0d9488;
+            background: #f0fdfa;
             transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(30, 58, 138, 0.08);
-            color: #1e3a8a;
+            color: var(--primary-dark);
+            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.12);
         }
 
+        /* Buttons with high contrast */
+        .btn-friendly {
+            background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
+            color: #ffffff !important;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 1rem;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-friendly:hover {
+            background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.4);
+        }
+
+        .btn-warm-outline {
+            background: #ffffff;
+            color: #0f766e;
+            border: 2px solid #0d9488;
+            border-radius: 14px;
+            padding: 12px 22px;
+            font-weight: 700;
+            font-size: 1rem;
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-warm-outline:hover {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+
+        /* Footer */
         footer {
-            background-color: #0f172a;
-            color: #94a3b8;
+            background-color: #112922;
+            color: #a7c4bc;
             padding: 45px 0 25px;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
         }
 
         footer a {
-            color: #cbd5e1;
+            color: #e6f3ef;
             text-decoration: none;
         }
 
         footer a:hover {
-            color: #ffffff;
+            color: #2dd4bf;
         }
     </style>
 </head>
 <body>
 
-    <!-- Institutional Header Strip -->
-    <div class="inst-header-strip">
+    <!-- Accessible Top Notice -->
+    <div class="friendly-top-strip">
         <div class="container d-flex justify-content-between align-items-center">
-            <div>
-                <i class="fas fa-university me-2 text-primary-subtle"></i>
-                <span>College Academic Information & Student Care Portal</span>
+            <div class="d-flex align-items-center gap-2">
+                <span>🌱 <strong>EduGuard</strong> — Student Support & Academic Care System</span>
             </div>
-            <div class="d-none d-md-flex align-items-center gap-3">
-                <span><i class="fas fa-calendar-alt me-1"></i> Academic Session 2025-26</span>
-                <span>&bull;</span>
-                <span class="text-success"><i class="fas fa-check-circle me-1"></i> System Operational</span>
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-sm btn-outline-light py-0 px-2" onclick="toggleTextSize()" style="font-size: 0.78rem;" title="Adjust text size">
+                    <i class="fas fa-text-height me-1"></i> Larger Text (Aa)
+                </button>
+                <span class="d-none d-md-inline">&bull;</span>
+                <span class="d-none d-md-inline text-light"><i class="fas fa-heart text-danger me-1"></i> Caring for every student's journey</span>
             </div>
         </div>
     </div>
 
-    <!-- Main Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-academic">
+    <!-- Main Friendly Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-friendly">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#">
                 <div class="brand-badge">
-                    <i class="fas fa-graduation-cap"></i>
+                    <i class="fas fa-seedling"></i>
                 </div>
                 <div>
-                    <span class="fw-bold fs-4 text-dark lh-1 d-block">Edu<span style="color: var(--primary-accent);">Guard</span></span>
-                    <small class="text-muted fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;">Dropout Prediction & Mentorship</small>
+                    <span class="fw-bold fs-4 text-dark lh-1 d-block">Edu<span style="color: var(--primary);">Guard</span></span>
+                    <small class="text-muted fw-semibold" style="font-size: 0.76rem;">Academic Care & Mentorship</small>
                 </div>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navAcademic">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navAcademic">
+            <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-3 fw-semibold">
-                    <li class="nav-item"><a class="nav-link text-dark" href="#portals">Portal Roles</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#calculator">Risk Assessment Model</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#modules">System Modules</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#roles">Portals</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#calculator">Wellness Check</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="#how-it-helps">How It Helps</a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="#departments">Departments</a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="#faq">FAQ</a></li>
                 </ul>
+
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary px-3 fw-bold">
-                        <i class="fas fa-sign-in-alt me-1"></i> Campus Login
+                    <a href="{{ url_for('auth.login') }}" class="btn-warm-outline py-2 px-3 fs-6">
+                        <i class="fas fa-sign-in-alt me-1"></i> Sign In
                     </a>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary px-3 fw-bold" style="background-color: var(--primary); border-color: var(--primary);">
-                        <i class="fas fa-user-plus me-1"></i> Register
+                    <a href="{{ url_for('auth.register') }}" class="btn-friendly py-2 px-3 fs-6">
+                        <i class="fas fa-user-plus me-1"></i> Join Hub
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Academic Hero & Overview -->
-    <section class="academic-hero">
+    <!-- Warm Friendly Hero Section -->
+    <section class="friendly-hero">
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-7">
-                    <span class="academic-tag mb-3">
-                        <i class="fas fa-shield-alt"></i> Institutional Retention Initiative
+                    <span class="tag-pill mb-3">
+                        <i class="fas fa-heart text-danger"></i> Supportive • Accessible • Student-First
                     </span>
-                    <h1 class="fw-bold display-5 mb-3 text-dark">
-                        Student Early Warning & Academic Support System
+                    <h1 class="display-5 fw-bold mb-3 text-dark">
+                        Every student deserves guidance when coursework gets tough. 🌱
                     </h1>
                     <p class="lead text-muted mb-4 fs-6">
-                        An internal institutional platform combining predictive machine learning models and faculty mentoring to identify academic distress early, coordinate counselling interventions, and support students toward degree completion.
+                        EduGuard connects students, teachers, and compassionate counsellors early. By looking at attendance and quiz trends, we offer friendly nudges, tutoring support, and confidential mentorship before anyone feels overwhelmed.
                     </p>
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg px-4 py-2 fs-6 fw-bold shadow-sm" style="background-color: var(--primary); border: none;">
-                            <i class="fas fa-key me-2"></i> Access Student / Staff Portal
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a href="{{ url_for('auth.login') }}" class="btn-friendly">
+                            <i class="fas fa-door-open me-2"></i> Open Your Portal
                         </a>
-                        <a href="#calculator" class="btn btn-outline-secondary btn-lg px-4 py-2 fs-6 fw-bold">
-                            <i class="fas fa-calculator me-2"></i> Model Risk Calculator
+                        <a href="#calculator" class="btn-warm-outline">
+                            <i class="fas fa-calculator me-2"></i> Try Wellness Calculator
                         </a>
                     </div>
-                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted small pt-2 border-top">
-                        <span><i class="fas fa-check text-success me-1"></i> Multi-Department Support</span>
+
+                    <div class="d-flex flex-wrap gap-3 text-muted small pt-2 border-top">
+                        <span class="d-flex align-items-center gap-1"><i class="fas fa-check-circle text-success"></i> Free & Open for College</span>
                         <span>&bull;</span>
-                        <span><i class="fas fa-check text-success me-1"></i> Confidential Counselling Queue</span>
+                        <span class="d-flex align-items-center gap-1"><i class="fas fa-lock text-primary"></i> 100% Private Counselling Notes</span>
                         <span>&bull;</span>
-                        <span><i class="fas fa-check text-success me-1"></i> 50+ Tracked Records</span>
+                        <span class="d-flex align-items-center gap-1"><i class="fas fa-universal-access text-warning"></i> High Readability Mode</span>
                     </div>
                 </div>
 
-                <!-- Campus Portal Roles Quick Grid -->
-                <div class="col-lg-5" id="portals">
-                    <div class="p-3 bg-white rounded-3 border shadow-sm">
+                <!-- Friendly Portals Grid -->
+                <div class="col-lg-5" id="roles">
+                    <div class="p-3 bg-white rounded-4 border-2 border shadow-sm">
                         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                            <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-th-large text-primary me-2"></i>Department Portals</h6>
-                            <span class="badge bg-light text-muted border">Role-Based Access</span>
+                            <h6 class="fw-bold mb-0 text-dark">
+                                <i class="fas fa-compass text-primary me-2"></i>Choose Your Space
+                            </h6>
+                            <span class="badge bg-light text-muted border">Quick Entry</span>
                         </div>
-                        <div class="row g-2">
+                        <div class="row g-3">
                             <div class="col-6">
-                                <a href="{{ url_for('auth.login') }}?role=admin" class="portal-entry-card">
-                                    <div class="portal-entry-icon bg-danger-subtle text-danger">
-                                        <i class="fas fa-user-shield"></i>
+                                <a href="{{ url_for('auth.login') }}?role=student" class="portal-card">
+                                    <div class="role-icon-box bg-success-subtle text-success">
+                                        <i class="fas fa-graduation-cap"></i>
                                     </div>
-                                    <h6 class="fw-bold mb-1">Administrator</h6>
-                                    <small class="text-muted" style="font-size: 0.76rem;">Analytics & ML Batch Scoring</small>
+                                    <h6 class="fw-bold mb-1 text-dark">Student Hub</h6>
+                                    <small class="text-muted" style="font-size: 0.78rem;">Wellness index, study plans & friendly AI bot</small>
                                 </a>
                             </div>
+
                             <div class="col-6">
-                                <a href="{{ url_for('auth.login') }}?role=teacher" class="portal-entry-card">
-                                    <div class="portal-entry-icon bg-primary-subtle text-primary">
+                                <a href="{{ url_for('auth.login') }}?role=teacher" class="portal-card">
+                                    <div class="role-icon-box" style="background-color: var(--primary-subtle); color: var(--primary-dark);">
                                         <i class="fas fa-chalkboard-teacher"></i>
                                     </div>
-                                    <h6 class="fw-bold mb-1">Faculty / Teacher</h6>
-                                    <small class="text-muted" style="font-size: 0.76rem;">Attendance, Marks & Alerts</small>
+                                    <h6 class="fw-bold mb-1 text-dark">Faculty Desk</h6>
+                                    <small class="text-muted" style="font-size: 0.78rem;">Class attendance, quiz alerts & student care</small>
                                 </a>
                             </div>
+
                             <div class="col-6">
-                                <a href="{{ url_for('auth.login') }}?role=counsellor" class="portal-entry-card">
-                                    <div class="portal-entry-icon bg-warning-subtle text-warning-emphasis">
-                                        <i class="fas fa-user-md"></i>
+                                <a href="{{ url_for('auth.login') }}?role=counsellor" class="portal-card">
+                                    <div class="role-icon-box bg-warning-subtle text-warning-emphasis">
+                                        <i class="fas fa-hand-holding-heart"></i>
                                     </div>
-                                    <h6 class="fw-bold mb-1">Counsellor Desk</h6>
-                                    <small class="text-muted" style="font-size: 0.76rem;">Referrals & Session Logs</small>
+                                    <h6 class="fw-bold mb-1 text-dark">Counsellor Room</h6>
+                                    <small class="text-muted" style="font-size: 0.78rem;">Support sessions, triage queue & advice logs</small>
                                 </a>
                             </div>
+
                             <div class="col-6">
-                                <a href="{{ url_for('auth.login') }}?role=student" class="portal-entry-card">
-                                    <div class="portal-entry-icon bg-success-subtle text-success">
-                                        <i class="fas fa-user-graduate"></i>
+                                <a href="{{ url_for('auth.login') }}?role=admin" class="portal-card">
+                                    <div class="role-icon-box bg-danger-subtle text-danger">
+                                        <i class="fas fa-user-shield"></i>
                                     </div>
-                                    <h6 class="fw-bold mb-1">Student Portal</h6>
-                                    <small class="text-muted" style="font-size: 0.76rem;">Wellness Score & Study Bot</small>
+                                    <h6 class="fw-bold mb-1 text-dark">Coordinator</h6>
+                                    <small class="text-muted" style="font-size: 0.78rem;">Department statistics & model health check</small>
                                 </a>
                             </div>
                         </div>
@@ -323,57 +421,63 @@
         </div>
     </section>
 
-    <!-- Quick Demo Accounts (Persona Selector) -->
+    <!-- Accessible Test Accounts / Demo Personas -->
     <section class="py-4 bg-white border-bottom">
         <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
                 <div>
-                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-users text-primary me-2"></i>Campus Testing Accounts</h6>
-                    <small class="text-muted">Click any persona to auto-populate credentials for evaluation</small>
+                    <h6 class="fw-bold mb-0 text-dark">
+                        <i class="fas fa-user-friends text-primary me-2"></i>Campus Testing Personas
+                    </h6>
+                    <small class="text-muted">Click any persona to log in instantly and explore their personalized view</small>
                 </div>
             </div>
+
             <div class="row g-2">
                 <div class="col-sm-6 col-lg-3">
-                    <a href="{{ url_for('auth.login') }}?role=admin" class="demo-persona-card">
-                        <div class="rounded-circle bg-danger text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold small">System Admin</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">admin@school.edu</small>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <a href="{{ url_for('auth.login') }}?role=teacher" class="demo-persona-card">
-                        <div class="rounded-circle bg-primary text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold small">Faculty Lecturer</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">teacher1@school.edu</small>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <a href="{{ url_for('auth.login') }}?role=counsellor" class="demo-persona-card">
-                        <div class="rounded-circle bg-warning text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold small">Student Counsellor</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">counsellor1@school.edu</small>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <a href="{{ url_for('auth.login') }}?role=student" class="demo-persona-card">
-                        <div class="rounded-circle bg-success text-white p-2" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+                    <a href="{{ url_for('auth.login') }}?role=student" class="demo-pill">
+                        <div class="rounded-circle bg-success text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-user-graduate"></i>
                         </div>
                         <div>
-                            <div class="fw-bold small">Student Member</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">student1@school.edu</small>
+                            <div class="fw-bold small text-dark">Student Member</div>
+                            <small class="text-muted" style="font-size: 0.76rem;">student1@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=teacher" class="demo-pill">
+                        <div class="rounded-circle p-2 text-white" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: var(--primary);">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small text-dark">Class Teacher</div>
+                            <small class="text-muted" style="font-size: 0.76rem;">teacher1@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=counsellor" class="demo-pill">
+                        <div class="rounded-circle bg-warning text-dark p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small text-dark">Student Counsellor</div>
+                            <small class="text-muted" style="font-size: 0.76rem;">counsellor1@school.edu</small>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ url_for('auth.login') }}?role=admin" class="demo-pill">
+                        <div class="rounded-circle bg-danger text-white p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small text-dark">Admin Coordinator</div>
+                            <small class="text-muted" style="font-size: 0.76rem;">admin@school.edu</small>
                         </div>
                     </a>
                 </div>
@@ -381,54 +485,58 @@
         </div>
     </section>
 
-    <!-- Risk Calculator / Assessment Model Demo -->
+    <!-- Interactive Academic Wellness & Guidance Calculator -->
     <section class="py-5" id="calculator">
         <div class="container py-2">
             <div class="row align-items-center g-4">
                 <div class="col-lg-5">
-                    <span class="badge bg-light text-primary border mb-2 px-2 py-1 small fw-bold">ACADEMIC ALGORITHM</span>
-                    <h3 class="fw-bold text-dark">Academic Risk Assessment Calculator</h3>
+                    <span class="badge bg-light text-primary border mb-2 px-3 py-1 small fw-bold" style="background-color: var(--primary-subtle) !important; color: var(--primary-dark) !important;">
+                        ✨ INTERACTIVE MODEL
+                    </span>
+                    <h3 class="fw-bold text-dark">Academic Wellness & Risk Check</h3>
                     <p class="text-muted small">
-                        This interactive demonstration shows how our machine learning models weigh core variables—such as classroom attendance percentage, semester GPA, and backlogs—to calculate an early intervention risk score.
+                        Slide the values below to see how classroom attendance, semester marks, and subjects with backlogs change a student's risk category and trigger friendly support steps.
                     </p>
                     <div class="p-3 bg-white rounded-3 border mb-3">
-                        <h6 class="fw-bold text-dark small mb-1"><i class="fas fa-info-circle text-primary me-2"></i>Intervention Thresholds</h6>
+                        <h6 class="fw-bold text-dark small mb-2"><i class="fas fa-hands-helping text-primary me-2"></i>Care Level Thresholds:</h6>
                         <ul class="list-unstyled mb-0 small text-muted">
-                            <li class="py-1"><span class="badge bg-danger-subtle text-danger me-2">Score &ge; 65%</span> Immediate academic advisor intervention & counselling</li>
-                            <li class="py-1"><span class="badge bg-warning-subtle text-warning-emphasis me-2">Score 40-64%</span> Tutoring schedule and laboratory monitoring</li>
-                            <li class="py-1"><span class="badge bg-success-subtle text-success me-2">Score &lt; 40%</span> Stable academic standing; self-paced guidance</li>
+                            <li class="py-1"><span class="badge bg-danger-subtle text-danger me-2">Risk &ge; 65%</span> Proactive advisor outreach & tutoring plan</li>
+                            <li class="py-1"><span class="badge bg-warning-subtle text-warning-emphasis me-2">Risk 40-64%</span> Peer study partner & attendance reminder</li>
+                            <li class="py-1"><span class="badge bg-success-subtle text-success me-2">Risk &lt; 40%</span> Smooth progress! Encouraging study tips</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="col-lg-7">
-                    <div class="academic-calc-box">
+                    <div class="calc-wrapper">
                         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-sliders-h text-primary me-2"></i>Metric Parameter Simulator</h5>
-                            <span class="badge bg-light text-muted border">Live Assessment</span>
+                            <h5 class="fw-bold mb-0 text-dark">
+                                <i class="fas fa-sliders-h text-primary me-2"></i>Adjust Academic Signals
+                            </h5>
+                            <span class="badge bg-light text-dark border">Live Calculation</span>
                         </div>
 
-                        <div class="row g-3 mb-3">
+                        <div class="row g-4 mb-3">
                             <div class="col-md-6">
                                 <label class="small fw-bold text-dark mb-1 d-flex justify-content-between">
                                     <span>Classroom Attendance</span>
-                                    <span class="text-primary" id="valAttendance">74%</span>
+                                    <span class="badge bg-primary text-white" id="valAttendance">74%</span>
                                 </label>
-                                <input type="range" class="form-range" id="inputAttendance" min="30" max="100" value="74">
+                                <input type="range" class="form-range" id="inputAttendance" min="30" max="100" value="74" aria-label="Classroom Attendance Percentage">
                             </div>
                             <div class="col-md-6">
                                 <label class="small fw-bold text-dark mb-1 d-flex justify-content-between">
-                                    <span>Cumulative GPA (out of 10)</span>
-                                    <span class="text-primary" id="valGPA">6.5</span>
+                                    <span>Current GPA (out of 10)</span>
+                                    <span class="badge bg-primary text-white" id="valGPA">6.5</span>
                                 </label>
-                                <input type="range" class="form-range" id="inputGPA" min="2.0" max="10.0" step="0.1" value="6.5">
+                                <input type="range" class="form-range" id="inputGPA" min="2.0" max="10.0" step="0.1" value="6.5" aria-label="Cumulative Grade Point Average">
                             </div>
                         </div>
 
-                        <div class="row g-3 mb-3">
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="small fw-bold text-dark mb-1">Current Semester</label>
-                                <select class="form-select form-select-sm" id="inputSemester">
+                                <select class="form-select" id="inputSemester">
                                     <option value="1">Semester 1 (First Year)</option>
                                     <option value="2">Semester 2</option>
                                     <option value="3" selected>Semester 3 (Second Year)</option>
@@ -437,32 +545,32 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="small fw-bold text-dark mb-1">Active Backlogs / Arrears</label>
-                                <select class="form-select form-select-sm" id="inputBacklogs">
-                                    <option value="0">0 Backlogs</option>
-                                    <option value="1" selected>1 Backlog</option>
-                                    <option value="2">2 Backlogs</option>
-                                    <option value="3">3+ Backlogs</option>
+                                <label class="small fw-bold text-dark mb-1">Pending Course Backlogs</label>
+                                <select class="form-select" id="inputBacklogs">
+                                    <option value="0">0 Backlogs (Clear)</option>
+                                    <option value="1" selected>1 Course Backlog</option>
+                                    <option value="2">2 Course Backlogs</option>
+                                    <option value="3">3+ Backlogs (Need Guidance)</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Result Assessment Box -->
-                        <div class="p-3 rounded-3 border" id="calcResultBox" style="background-color: #f8fafc;">
+                        <!-- Friendly Result Card -->
+                        <div class="p-3 rounded-3 border" id="calcResultBox" style="background-color: #fffbeb; border-color: #fde68a;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="text-muted small text-uppercase fw-bold">Computed Category</div>
-                                    <div class="h5 fw-bold mb-0" id="calcCategory" style="color: #d97706;">Moderate Risk</div>
+                                    <div class="text-muted small text-uppercase fw-bold">Support Level</div>
+                                    <div class="h5 fw-bold mb-0" id="calcCategory" style="color: #d97706;">Moderate Attention Needed</div>
                                 </div>
                                 <div class="text-end">
-                                    <div class="text-muted small text-uppercase fw-bold">Risk Index</div>
+                                    <div class="text-muted small text-uppercase fw-bold">Calculated Risk Index</div>
                                     <div class="h4 fw-bold mb-0 text-dark" id="calcIndex">45%</div>
                                 </div>
                             </div>
                             <hr class="my-2">
-                            <div class="small text-muted d-flex align-items-center gap-2" id="calcAction">
+                            <div class="small d-flex align-items-center gap-2" id="calcAction">
                                 <i class="fas fa-lightbulb text-warning"></i>
-                                <span>Suggested Action: Assign peer tutor for challenging coursework and monitor attendance.</span>
+                                <span><strong>Support Suggestion:</strong> Pair with a peer study group and check in on challenging modules.</span>
                             </div>
                         </div>
                     </div>
@@ -471,127 +579,129 @@
         </div>
     </section>
 
-    <!-- Core System Modules -->
-    <section class="py-5 bg-white border-top border-bottom" id="modules">
+    <!-- How EduGuard Helps (Pillars) -->
+    <section class="py-5 bg-white border-top border-bottom" id="how-it-helps">
         <div class="container py-2">
-            <div class="text-center max-w-700 mx-auto mb-5">
-                <span class="badge bg-light text-primary border mb-2 px-2 py-1 small fw-bold">SYSTEM ARCHITECTURE</span>
-                <h3 class="fw-bold text-dark">Institutional Support Modules</h3>
-                <p class="text-muted small">Designed to maintain academic integrity while providing timely pastoral care to students.</p>
+            <div class="text-center mx-auto mb-5" style="max-width: 650px;">
+                <span class="badge border px-3 py-1 mb-2 fw-bold" style="background-color: var(--amber-subtle); color: #92400e;">
+                    🧡 COMPASSIONATE CARE
+                </span>
+                <h3 class="fw-bold text-dark">How We Help Students Thrive</h3>
+                <p class="text-muted small">Instead of punitive alerts, EduGuard builds a safety net around every learner.</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-3">
-                    <div class="module-card">
-                        <div class="rounded-3 p-3 bg-primary-subtle text-primary mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-                            <i class="fas fa-table"></i>
+                    <div class="pillar-card">
+                        <div class="role-icon-box mb-3" style="background-color: var(--primary-subtle); color: var(--primary-dark);">
+                            <i class="fas fa-chart-line"></i>
                         </div>
-                        <h6 class="fw-bold text-dark mb-2">Academic Data Ingestion</h6>
-                        <p class="text-muted small mb-0">Aggregates daily classroom attendance logs, internal assessment quizzes, and semester end examinations.</p>
+                        <h6 class="fw-bold text-dark mb-2">Early Check-ins</h6>
+                        <p class="text-muted small mb-0">Notice drops in attendance before midterm exams so teachers can reach out gently.</p>
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-3">
-                    <div class="module-card">
-                        <div class="rounded-3 p-3 bg-danger-subtle text-danger mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-                            <i class="fas fa-brain"></i>
+                    <div class="pillar-card">
+                        <div class="role-icon-box bg-success-subtle text-success mb-3">
+                            <i class="fas fa-smile-beam"></i>
                         </div>
-                        <h6 class="fw-bold text-dark mb-2">Predictive ML Inference</h6>
-                        <p class="text-muted small mb-0">Applies supervised learning algorithms to compute individualized risk probabilities before final examination cycles.</p>
+                        <h6 class="fw-bold text-dark mb-2">Wellness First</h6>
+                        <p class="text-muted small mb-0">Students see encouraging wellness scores out of 100 with actionable study resources.</p>
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-3">
-                    <div class="module-card">
-                        <div class="rounded-3 p-3 bg-warning-subtle text-warning-emphasis mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-                            <i class="fas fa-clipboard-check"></i>
+                    <div class="pillar-card">
+                        <div class="role-icon-box bg-warning-subtle text-warning-emphasis mb-3">
+                            <i class="fas fa-comments"></i>
                         </div>
-                        <h6 class="fw-bold text-dark mb-2">Faculty Referral Queue</h6>
-                        <p class="text-muted small mb-0">Enables lecturers to refer students directly to qualified campus counsellors with timestamped notes.</p>
+                        <h6 class="fw-bold text-dark mb-2">Confidential Chats</h6>
+                        <p class="text-muted small mb-0">Private 1-on-1 scheduling with certified counsellors to talk through personal or academic roadblocks.</p>
                     </div>
                 </div>
 
                 <div class="col-md-6 col-lg-3">
-                    <div class="module-card">
-                        <div class="rounded-3 p-3 bg-success-subtle text-success mb-3" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-                            <i class="fas fa-heart"></i>
+                    <div class="pillar-card">
+                        <div class="role-icon-box bg-danger-subtle text-danger mb-3">
+                            <i class="fas fa-robot"></i>
                         </div>
-                        <h6 class="fw-bold text-dark mb-2">Student Wellness Score</h6>
-                        <p class="text-muted small mb-0">Displays positive, non-stigmatizing wellness progress out of 100 to promote student morale and self-care.</p>
+                        <h6 class="fw-bold text-dark mb-2">24/7 AI Companion</h6>
+                        <p class="text-muted small mb-0">Ask questions about study strategies, exam preparation, and coping with study stress anytime.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Academic Departments Monitored -->
+    <!-- Monitored Departments -->
     <section class="py-5" id="departments">
         <div class="container py-2">
-            <div class="p-4 bg-white rounded-3 border">
+            <div class="p-4 bg-white rounded-4 border">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3 pb-2 border-bottom">
                     <div>
-                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-building text-primary me-2"></i>Monitored Academic Departments</h5>
-                        <small class="text-muted">Current cohort distribution across 5 core engineering disciplines</small>
+                        <h5 class="fw-bold text-dark mb-0"><i class="fas fa-university text-primary me-2"></i>Campus Engineering Cohorts</h5>
+                        <small class="text-muted">Students actively supported across our five departments</small>
                     </div>
                     <span class="badge bg-light text-dark border">50+ Active Students</span>
                 </div>
                 <div class="row g-3 text-center">
-                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Computer Science</div><small class="text-muted">14 Students</small></div></div>
-                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Electronics & Comm.</div><small class="text-muted">11 Students</small></div></div>
-                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Mechanical</div><small class="text-muted">10 Students</small></div></div>
-                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Civil Engineering</div><small class="text-muted">8 Students</small></div></div>
-                    <div class="col-md"><div class="p-3 bg-light rounded-2 border"><div class="fw-bold text-dark small">Electrical</div><small class="text-muted">7 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-3 border"><div class="fw-bold text-dark small">💻 Computer Science</div><small class="text-muted">14 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-3 border"><div class="fw-bold text-dark small">📡 Electronics & Comm.</div><small class="text-muted">11 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-3 border"><div class="fw-bold text-dark small">⚙️ Mechanical</div><small class="text-muted">10 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-3 border"><div class="fw-bold text-dark small">🏗️ Civil Engineering</div><small class="text-muted">8 Students</small></div></div>
+                    <div class="col-md"><div class="p-3 bg-light rounded-3 border"><div class="fw-bold text-dark small">⚡ Electrical</div><small class="text-muted">7 Students</small></div></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- Friendly FAQ -->
     <section class="py-5 bg-white border-top" id="faq">
         <div class="container py-2">
-            <div class="text-center max-w-700 mx-auto mb-4">
-                <h4 class="fw-bold text-dark">Frequently Asked Academic Questions</h4>
-                <p class="text-muted small">Standard operating procedures regarding data privacy and counselling intervention.</p>
+            <div class="text-center mx-auto mb-4" style="max-width: 650px;">
+                <h4 class="fw-bold text-dark">Common Questions & Guidance</h4>
+                <p class="text-muted small">Everything you need to know about how your data and wellness are handled.</p>
             </div>
 
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="accordion" id="academicFaq">
-                        <div class="accordion-item border mb-2 rounded-2 overflow-hidden">
+                    <div class="accordion" id="friendlyFaq">
+                        <div class="accordion-item border mb-2 rounded-3 overflow-hidden">
                             <h2 class="accordion-header">
-                                <button class="accordion-button fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
-                                    How are risk scores computed for enrolled students?
+                                <button class="accordion-button fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#fq1">
+                                    Will students get negative marks or punishment if flagged?
                                 </button>
                             </h2>
-                            <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#academicFaq">
+                            <div id="fq1" class="accordion-collapse collapse show" data-bs-parent="#friendlyFaq">
                                 <div class="accordion-body text-muted small">
-                                    The model processes multiple academic signals including attendance trends over 30 days, internal quiz results, semester grade point average (GPA), and historical backlogs to compute an objective risk probability.
+                                    Never! EduGuard is built strictly for supportive care. Flags are private reminders for academic advisors to reach out with extra tutoring, flexible assignment plans, or encouraging mentorship.
                                 </div>
                             </div>
                         </div>
 
-                        <div class="accordion-item border mb-2 rounded-2 overflow-hidden">
+                        <div class="accordion-item border mb-2 rounded-3 overflow-hidden">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
-                                    Can students see if they are categorized as high risk?
+                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#fq2">
+                                    Can classmates see my wellness score?
                                 </button>
                             </h2>
-                            <div id="q2" class="accordion-collapse collapse" data-bs-parent="#academicFaq">
+                            <div id="fq2" class="accordion-collapse collapse" data-bs-parent="#friendlyFaq">
                                 <div class="accordion-body text-muted small">
-                                    To avoid stress and stigmatization, students see a positive "Academic Wellness Score" out of 100 alongside proactive study suggestions. Detailed risk levels are exclusively available to authorized department heads, teachers, and counsellors.
+                                    No. Your wellness scores, attendance records, and chat history with the study bot are completely confidential to your personal login.
                                 </div>
                             </div>
                         </div>
 
-                        <div class="accordion-item border mb-2 rounded-2 overflow-hidden">
+                        <div class="accordion-item border mb-2 rounded-3 overflow-hidden">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
-                                    Are counselling session records private?
+                                <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#fq3">
+                                    How do I request a confidential counsellor session?
                                 </button>
                             </h2>
-                            <div id="q3" class="accordion-collapse collapse" data-bs-parent="#academicFaq">
+                            <div id="fq3" class="accordion-collapse collapse" data-bs-parent="#friendlyFaq">
                                 <div class="accordion-body text-muted small">
-                                    Yes. Detailed clinical counselling session notes and personal student disclosures are restricted strictly to designated counsellor accounts and are not visible in general faculty rosters.
+                                    Students can book a 1-on-1 slot right from the Student Dashboard with one click, or ask any teacher to submit a quiet referral to the counselling desk.
                                 </div>
                             </div>
                         </div>
@@ -601,57 +711,66 @@
         </div>
     </section>
 
-    <!-- Academic Footer -->
+    <!-- Warm Footer -->
     <footer>
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="brand-badge" style="width: 32px; height: 32px; font-size: 1rem;">
-                            <i class="fas fa-graduation-cap"></i>
+                        <div class="brand-badge" style="width: 34px; height: 34px; font-size: 1rem;">
+                            <i class="fas fa-seedling"></i>
                         </div>
-                        <h6 class="fw-bold text-white mb-0">EduGuard Academic System</h6>
+                        <h6 class="fw-bold text-white mb-0">EduGuard Student Care</h6>
                     </div>
-                    <p class="text-white-50 small mb-0">College Student Early Warning, Retention & Pastoral Mentorship Portal. Designed for department faculties, student advisors, and university counselling desks.</p>
+                    <p class="small mb-0" style="color: #a7c4bc;">A warm, supportive student retention and mentorship system. Built for college faculties, advisors, and students to learn together without stress.</p>
                 </div>
                 <div class="col-lg-2 col-6">
-                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Portals</h6>
-                    <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2 mb-0">
-                        <li><a href="{{ url_for('auth.login') }}?role=admin">Admin Desk</a></li>
-                        <li><a href="{{ url_for('auth.login') }}?role=teacher">Faculty Portal</a></li>
-                        <li><a href="{{ url_for('auth.login') }}?role=counsellor">Counsellor Queue</a></li>
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Direct Spaces</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
                         <li><a href="{{ url_for('auth.login') }}?role=student">Student Hub</a></li>
+                        <li><a href="{{ url_for('auth.login') }}?role=teacher">Faculty Desk</a></li>
+                        <li><a href="{{ url_for('auth.login') }}?role=counsellor">Counsellor Room</a></li>
+                        <li><a href="{{ url_for('auth.login') }}?role=admin">Coordinator Desk</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-2 col-6">
-                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Resources</h6>
-                    <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2 mb-0">
-                        <li><a href="#calculator">Model Simulator</a></li>
-                        <li><a href="#departments">Departments</a></li>
-                        <li><a href="#modules">Architecture</a></li>
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Accessibility</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                        <li><a href="javascript:void(0)" onclick="toggleTextSize()">Toggle Larger Font</a></li>
+                        <li><a href="#calculator">Wellness Calculator</a></li>
                         <li><a href="#faq">Student FAQ</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3">
-                    <h6 class="fw-bold text-white mb-3 small text-uppercase">System Status</h6>
-                    <div class="p-3 rounded-2" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
-                        <small class="text-success d-block fw-bold mb-1"><i class="fas fa-check-circle me-1"></i> Campus Server Online</small>
-                        <small class="text-white-50 d-block">ML Predictor: <span class="text-white">Active</span></small>
-                        <small class="text-white-50 d-block">Database: <span class="text-white">50+ Seeded Students</span></small>
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Status</h6>
+                    <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <small class="text-success d-block fw-bold mb-1"><i class="fas fa-check-circle me-1"></i> System Online & Warm</small>
+                        <small class="d-block" style="color: #a7c4bc;">Machine Learning: <span class="text-white">Active</span></small>
+                        <small class="d-block" style="color: #a7c4bc;">Student Records: <span class="text-white">50+ Supported</span></small>
                     </div>
                 </div>
             </div>
-            <hr class="my-4 border-secondary opacity-50">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-white-50">
-                <span>&copy; Academic Year 2025-26 EduGuard. Department of Student Welfare.</span>
-                <span>Academic Retention & Mentorship System.</span>
+            <hr class="my-4 border-secondary opacity-25">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small" style="color: #a7c4bc;">
+                <span>🌱 EduGuard &bull; Student Care & Mentorship System.</span>
+                <span>Open Academic Project.</span>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Risk Assessment Calculator Logic
+        // Reading Mode Text Size Toggle
+        function toggleTextSize() {
+            document.body.classList.toggle('accessible-large-text');
+            const isActive = document.body.classList.contains('accessible-large-text');
+            localStorage.setItem('eduguard_accessible_text', isActive ? 'true' : 'false');
+        }
+        if (localStorage.getItem('eduguard_accessible_text') === 'true') {
+            document.body.classList.add('accessible-large-text');
+        }
+
+        // Calculator Interactive Logic
         const inputAttendance = document.getElementById('inputAttendance');
         const inputGPA = document.getElementById('inputGPA');
         const inputSemester = document.getElementById('inputSemester');
@@ -677,23 +796,23 @@
             calcIndex.innerText = risk + '%';
 
             if (risk >= 65) {
-                calcCategory.innerText = 'High Risk';
-                calcCategory.style.color = '#dc2626';
-                calcResultBox.style.borderColor = '#fca5a5';
-                calcResultBox.style.backgroundColor = '#fef2f2';
-                calcAction.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i><span><strong>Immediate Referral:</strong> Notify academic advisor & schedule formal counselling.</span>';
+                calcCategory.innerText = 'Support Needed (High Attention)';
+                calcCategory.style.color = '#e11d48';
+                calcResultBox.style.borderColor = '#fecdd3';
+                calcResultBox.style.backgroundColor = '#fff1f2';
+                calcAction.innerHTML = '<i class="fas fa-heart text-danger"></i><span><strong>Support Suggestion:</strong> Friendly tutor outreach & 1-on-1 mentor check-in scheduled.</span>';
             } else if (risk >= 40) {
-                calcCategory.innerText = 'Moderate Risk';
+                calcCategory.innerText = 'Moderate Attention Needed';
                 calcCategory.style.color = '#d97706';
                 calcResultBox.style.borderColor = '#fde68a';
                 calcResultBox.style.backgroundColor = '#fffbeb';
-                calcAction.innerHTML = '<i class="fas fa-lightbulb text-warning"></i><span><strong>Suggested Action:</strong> Assign peer tutor for challenging coursework and monitor attendance.</span>';
+                calcAction.innerHTML = '<i class="fas fa-lightbulb text-warning"></i><span><strong>Support Suggestion:</strong> Pair with a peer study group and check in on challenging modules.</span>';
             } else {
-                calcCategory.innerText = 'Low Risk (Healthy)';
+                calcCategory.innerText = 'Healthy Progress (Low Stress)';
                 calcCategory.style.color = '#059669';
                 calcResultBox.style.borderColor = '#a7f3d0';
                 calcResultBox.style.backgroundColor = '#ecfdf5';
-                calcAction.innerHTML = '<i class="fas fa-check-circle text-success"></i><span><strong>Standing Good:</strong> Academic performance is stable. Continue standard semester track.</span>';
+                calcAction.innerHTML = '<i class="fas fa-smile text-success"></i><span><strong>Support Suggestion:</strong> Great academic momentum! Keep up current habits and balance rest.</span>';
             }
         }
 
