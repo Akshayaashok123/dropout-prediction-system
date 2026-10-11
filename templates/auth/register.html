@@ -1,48 +1,97 @@
 {% extends 'base.html' %}
-{% block title %}Register - EduGuard{% endblock %}
+{% block title %}Create Account - EduGuard{% endblock %}
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-lg border-0 my-4">
-            <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <i class="fas fa-user-plus fa-3x mb-3" style="color: var(--primary-color);"></i>
-                    <h3 class="fw-bold" style="color: var(--primary-color);">Create Account</h3>
-                    <p class="text-muted">Join EduGuard today</p>
+<div class="row justify-content-center align-items-center py-4" style="min-height: 75vh;">
+    <div class="col-xl-9 col-lg-10">
+        <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 24px;">
+            <div class="row g-0">
+                <!-- Left Feature Column -->
+                <div class="col-lg-5 text-white d-none d-lg-flex flex-column justify-content-between p-5" 
+                     style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%); position: relative;">
+                    <div style="position: relative; z-index: 2;">
+                        <div class="d-flex align-items-center gap-2 mb-4">
+                            <div class="brand-icon-box" style="width: 36px; height: 36px; font-size: 1.1rem;">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <span class="fs-4 fw-bold text-white">Edu<span style="color: var(--primary-light);">Guard</span></span>
+                        </div>
+                        <h3 class="fw-bold text-white mb-3">Join the Academic Success Network</h3>
+                        <p class="text-white-50 small mb-4">Create your institutional account to collaborate on student retention, access intelligent early warning flags, and support learners.</p>
+                        
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);">
+                            <div class="d-flex align-items-center gap-2 text-warning fw-bold small mb-2">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Institutional Protection</span>
+                            </div>
+                            <p class="text-white-50 small mb-0">Role-specific access controls guarantee that sensitive counselling notes and risk assessments remain strictly confidential.</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top border-white border-opacity-25" style="position: relative; z-index: 2;">
+                        <small class="text-white-50">Already registered? <a href="{{ url_for('auth.login') }}" class="text-white fw-bold">Sign In here</a></small>
+                    </div>
                 </div>
-                <form method="POST" action="">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Full Name</label>
-                        <input type="text" class="form-control bg-light" name="name" required placeholder="John Doe">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Email address</label>
-                        <input type="email" class="form-control bg-light" name="email" required placeholder="john@example.com">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Password</label>
-                            <input type="password" class="form-control bg-light" name="password" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Confirm Password</label>
-                            <input type="password" class="form-control bg-light" name="confirm_password" required>
-                        </div>
-                    </div>
+
+                <!-- Right Form Column -->
+                <div class="col-lg-7 p-4 p-md-5 bg-white">
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">Role</label>
-                        <select class="form-select bg-light" name="role" required>
-                            <option value="">Select a role...</option>
-                            <option value="Student">Student</option>
-                            <option value="Teacher">Teacher</option>
-                            <option value="Counsellor">Counsellor</option>
-                            <option value="Admin">Admin</option>
-                        </select>
+                        <h3 class="fw-bold text-dark mb-1">Create an Account</h3>
+                        <p class="text-muted small">Select your institutional role to set up your profile</p>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="background-color: var(--primary-color); border: none;">Register</button>
-                </form>
-                <div class="text-center mt-4">
-                    <p class="mb-0 text-muted">Already have an account? <a href="{{ url_for('auth.login') }}" class="fw-bold text-decoration-none" style="color: var(--primary-color);">Login here</a></p>
+
+                    <form method="POST" action="">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control border-start-0" name="name" required placeholder="e.g. Dr. Aruna Sen">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark small">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control border-start-0" name="email" required placeholder="name@school.edu">
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark small">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control border-start-0" name="password" required placeholder="Create password">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark small">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-check-double"></i></span>
+                                    <input type="password" class="form-control border-start-0" name="confirm_password" required placeholder="Confirm password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark small">Institutional Role</label>
+                            <select class="form-select" name="role" required>
+                                <option value="" selected disabled>Select your role...</option>
+                                <option value="Student">Student (Wellness & Resources)</option>
+                                <option value="Teacher">Teacher / Faculty (Class Tracking)</option>
+                                <option value="Counsellor">Counsellor (Intervention Care)</option>
+                                <option value="Admin">Administrator (Institutional Analytics)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold text-white shadow-sm" style="background: var(--primary-gradient); border: none;">
+                            <i class="fas fa-user-check me-2"></i> Register Account
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class="mb-0 text-muted small">Already have an account? <a href="{{ url_for('auth.login') }}" class="fw-bold text-primary text-decoration-none">Log in here</a></p>
+                    </div>
                 </div>
             </div>
         </div>

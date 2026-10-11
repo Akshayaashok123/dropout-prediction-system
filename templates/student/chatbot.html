@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}AI Counseling Assistant - EduGuard{% endblock %}
+{% block title %}AI Study & Wellness Companion - EduGuard{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -8,94 +8,112 @@
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 15px;
-        padding: 20px;
-        background-color: #fdfdfd;
-        border-radius: 8px;
+        gap: 16px;
+        padding: 24px;
+        background-color: #f8fafc;
+        border-radius: 16px;
     }
     .chat-msg {
-        max-width: 75%;
-        padding: 12px 16px;
-        border-radius: 15px;
-        font-size: 0.95rem;
-        line-height: 1.4;
+        max-width: 78%;
+        padding: 14px 18px;
+        border-radius: 18px;
+        font-size: 0.94rem;
+        line-height: 1.5;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
     .bot-msg {
-        background-color: #e8eaf6;
-        color: #1a237e;
+        background-color: #ffffff;
+        color: #1e293b;
         align-self: flex-start;
-        border-bottom-left-radius: 2px;
+        border-bottom-left-radius: 4px;
+        border: 1px solid #e2e8f0;
     }
     .user-msg {
-        background-color: #1a237e;
+        background: var(--primary-gradient);
         color: white;
         align-self: flex-end;
-        border-bottom-right-radius: 2px;
+        border-bottom-right-radius: 4px;
     }
     .quick-chip {
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 9999px;
+        padding: 8px 14px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+        background: white;
     }
     .quick-chip:hover {
-        background-color: #1a237e;
+        background: var(--primary);
         color: white !important;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-9">
-        <div class="card shadow-sm border-0">
+    <div class="col-xl-9 col-lg-10">
+        <div class="card shadow-sm border-0" style="border-radius: 20px;">
             <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-circle p-2 bg-primary text-white me-3 d-flex align-items-center justify-content-center" style="width:42px;height:42px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="brand-icon-box" style="width: 44px; height: 44px; font-size: 1.25rem;">
                         <i class="fas fa-robot"></i>
                     </div>
                     <div>
-                        <h5 class="mb-0 fw-bold" style="color: var(--primary-color);">EduGuard AI Student Counselor</h5>
-                        <small class="text-success"><i class="fas fa-circle me-1" style="font-size: 8px;"></i>Online & Ready to Help</small>
+                        <h5 class="mb-0 fw-bold text-dark">EduGuard AI Companion</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="pulse-dot success"></span>
+                            <small class="text-success fw-semibold">24/7 Academic & Wellbeing Support</small>
+                        </div>
                     </div>
                 </div>
-                <a href="{{ url_for('student.request_help') }}" class="btn btn-outline-danger btn-sm">
-                    <i class="fas fa-user-tie me-1"></i>Connect with Human Counselor
+                <a href="{{ url_for('student.request_help') }}" class="btn btn-outline-danger btn-sm fw-semibold">
+                    <i class="fas fa-user-md me-1"></i> Speak with Human Counsellor
                 </a>
             </div>
 
-            <div class="alert alert-info mx-3 mt-3 mb-0 py-2 small d-flex align-items-center">
-                <i class="fas fa-shield-alt me-2 fa-lg"></i>
-                <div>
-                    <strong>Confidential & Safe Space:</strong> This AI assists with study planning, motivation, and time management. In sensitive crisis or distress situations, you can immediately request a human professional.
-                </div>
+            <div class="p-3 bg-light border-bottom d-flex align-items-center gap-2 small text-muted">
+                <i class="fas fa-lock text-primary"></i>
+                <span><strong>Private & Confidential:</strong> Feel free to share study anxieties or request attendance recovery tips. In critical crisis situations, you will be instantly connected with faculty care staff.</span>
             </div>
 
-            <div class="card-body">
+            <div class="card-body p-4">
                 <div class="chat-container border" id="chatWindow">
                     <div class="chat-msg bot-msg">
-                        Hello {{ current_user.name }}! 👋 I am your academic wellness assistant. How are you feeling about your classes and exams today? You can ask me for study strategies, attendance tips, or help dealing with academic stress.
+                        <div class="d-flex align-items-center gap-2 mb-1 text-primary fw-bold small">
+                            <i class="fas fa-robot"></i> EduGuard AI
+                        </div>
+                        Hello {{ current_user.name }}! 👋 I am your academic wellness mentor. How are you feeling about your studies, exams, or coursework today? Tap any of the topics below or ask me anything directly!
                     </div>
                 </div>
 
-                <!-- Quick Prompts -->
-                <div class="mt-3 d-flex flex-wrap gap-2">
-                    <span class="badge bg-light text-dark border p-2 quick-chip" onclick="sendQuick('How can I improve my low attendance?')">
-                        <i class="fas fa-calendar-check text-warning me-1"></i> Improve Attendance
-                    </span>
-                    <span class="badge bg-light text-dark border p-2 quick-chip" onclick="sendQuick('I am feeling overwhelmed with exam stress.')">
-                        <i class="fas fa-heart text-danger me-1"></i> Exam Stress
-                    </span>
-                    <span class="badge bg-light text-dark border p-2 quick-chip" onclick="sendQuick('Give me a weekly study schedule.')">
-                        <i class="fas fa-book-open text-primary me-1"></i> Study Routine
-                    </span>
-                    <span class="badge bg-light text-dark border p-2 quick-chip" onclick="sendQuick('I have backlogs. What should I do?')">
-                        <i class="fas fa-exclamation-triangle text-warning me-1"></i> Clear Backlogs
-                    </span>
+                <!-- Quick Prompts Chips -->
+                <div class="mt-3">
+                    <small class="text-muted fw-bold d-block mb-2 text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">Suggested Prompts:</small>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="quick-chip text-dark" onclick="sendQuick('How can I quickly improve my low attendance percentage?')">
+                            <i class="fas fa-calendar-check text-warning me-1"></i> Attendance Recovery
+                        </span>
+                        <span class="quick-chip text-dark" onclick="sendQuick('I am feeling overwhelmed with midterm exam anxiety.')">
+                            <i class="fas fa-heart text-danger me-1"></i> Exam Anxiety
+                        </span>
+                        <span class="quick-chip text-dark" onclick="sendQuick('Create an effective 2-hour daily study routine for engineering.')">
+                            <i class="fas fa-book-open text-primary me-1"></i> Study Routine
+                        </span>
+                        <span class="quick-chip text-dark" onclick="sendQuick('I have a backlog in semester mathematics. What is my best recovery strategy?')">
+                            <i class="fas fa-graduation-cap text-success me-1"></i> Clear Backlogs
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Input area -->
                 <form id="chatForm" class="mt-3 d-flex gap-2">
-                    <input type="text" id="userInput" class="form-control" placeholder="Type your question or concern here..." autocomplete="off" required>
-                    <button type="submit" class="btn btn-primary px-4" style="background-color: var(--primary-color);">
+                    <input type="text" id="userInput" class="form-control" placeholder="Ask a question or share how you're feeling..." autocomplete="off" required>
+                    <button type="submit" class="btn btn-primary px-4 text-white" style="background: var(--primary-gradient); border: none;">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </form>
@@ -132,11 +150,11 @@
         appendMessage('user', text);
         userInput.value = '';
 
-        // Temporary thinking indicator
+        // Typing indicator
         const typingDiv = document.createElement('div');
         typingDiv.className = 'chat-msg bot-msg text-muted fst-italic';
         typingDiv.id = 'botTyping';
-        typingDiv.textContent = 'Thinking...';
+        typingDiv.textContent = 'EduGuard is typing...';
         chatWindow.appendChild(typingDiv);
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
@@ -150,11 +168,11 @@
             const botTyping = document.getElementById('botTyping');
             if(botTyping) botTyping.remove();
 
-            appendMessage('bot', data.reply || "I am here to support you. Let's work through this step by step.");
+            appendMessage('bot', data.reply || "I am here for you! Let's break this down into small, achievable steps.");
         } catch (err) {
             const botTyping = document.getElementById('botTyping');
             if(botTyping) botTyping.remove();
-            appendMessage('bot', "I couldn't reach the server right now, but please don't hesitate to reach out to our campus counsellors.");
+            appendMessage('bot', "I couldn't reach the server right now, but please know that support is always available from your campus mentors.");
         }
     });
 </script>

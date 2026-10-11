@@ -1,79 +1,175 @@
 {% extends 'base.html' %}
-{% block title %}Counsellor Dashboard - EduGuard{% endblock %}
+{% block title %}Counsellor Desk - EduGuard{% endblock %}
 {% block content %}
-<h3 class="mb-4" style="color: var(--primary-color);">Welcome, {{ current_user.name|default('Counsellor') }}</h3>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card bg-danger text-white h-100 shadow-sm border-0">
-            <div class="card-body text-center py-4">
-                <i class="fas fa-user-injured fa-2x mb-2 opacity-75"></i>
-                <h2 class="fw-bold mb-0">{{ stats.new_referrals|default(4) }}</h2>
-                <h6 class="text-uppercase mb-0">New Referrals</h6>
+<!-- Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Counsellor Hub: {{ current_user.name|default('Pastoral Mentor') }}</h2>
+            <span class="badge bg-warning-subtle text-warning-emphasis fw-semibold px-2 py-1">Intervention Desk</span>
+        </div>
+        <p class="text-muted small mb-0 mt-1">Confidential case management and prioritized student referrals across campus faculties.</p>
+    </div>
+    
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-primary d-flex align-items-center gap-2 text-white shadow-sm" style="background: var(--primary-gradient); border: none;">
+            <i class="fas fa-user-clock"></i>
+            <span>Triage Priority Referrals</span>
+        </a>
+        <a href="{{ url_for('counsellor.sessions') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+            <i class="fas fa-calendar-alt"></i>
+            <span>All Sessions</span>
+        </a>
+    </div>
+</div>
+
+<!-- 4 Key Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="metric-card gradient-danger">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">New Referrals</span>
+                        <span class="pulse-dot danger"></span>
+                    </div>
+                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.new_referrals|default(4) }}</h2>
+                    <small class="text-white-50"><i class="fas fa-bolt me-1"></i> Awaiting Triage</small>
+                </div>
+                <div class="metric-icon-bubble">
+                    <i class="fas fa-user-injured"></i>
+                </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
+                <div class="progress-bar bg-white" style="width: 45%;"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-white h-100 shadow-sm border-0">
-            <div class="card-body text-center py-4">
-                <i class="fas fa-folder-open fa-2x mb-2 opacity-75"></i>
-                <h2 class="fw-bold mb-0">{{ stats.active_cases|default(12) }}</h2>
-                <h6 class="text-uppercase mb-0">Active Cases</h6>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="metric-card gradient-warning">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">Active Cases</span>
+                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.active_cases|default(12) }}</h2>
+                    <small class="text-white-50"><i class="fas fa-folder-open me-1"></i> Under Mentorship</small>
+                </div>
+                <div class="metric-icon-bubble">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
+                <div class="progress-bar bg-white" style="width: 70%;"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-primary text-white h-100 shadow-sm border-0">
-            <div class="card-body text-center py-4">
-                <i class="fas fa-calendar-alt fa-2x mb-2 opacity-75"></i>
-                <h2 class="fw-bold mb-0">{{ stats.sessions_week|default(8) }}</h2>
-                <h6 class="text-uppercase mb-0">Sessions This Week</h6>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="metric-card gradient-indigo">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">Weekly Consults</span>
+                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.sessions_week|default(8) }}</h2>
+                    <small class="text-white-50"><i class="fas fa-clock me-1"></i> Scheduled This Week</small>
+                </div>
+                <div class="metric-icon-bubble">
+                    <i class="fas fa-comments"></i>
+                </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
+                <div class="progress-bar bg-white" style="width: 80%;"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white h-100 shadow-sm border-0">
-            <div class="card-body text-center py-4">
-                <i class="fas fa-check-circle fa-2x mb-2 opacity-75"></i>
-                <h2 class="fw-bold mb-0">{{ stats.completed|default(25) }}</h2>
-                <h6 class="text-uppercase mb-0">Completed Cases</h6>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="metric-card gradient-success">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">Successfully Closed</span>
+                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.completed|default(25) }}</h2>
+                    <small class="text-white-50"><i class="fas fa-check-double me-1"></i> Improved & Retained</small>
+                </div>
+                <div class="metric-icon-bubble">
+                    <i class="fas fa-medal"></i>
+                </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
+                <div class="progress-bar bg-white" style="width: 95%;"></div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-8">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-list text-danger me-2"></i>Priority Referral Queue</span>
-                <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-sm btn-outline-primary">View All</a>
+<!-- Main Grid: Referral Queue & Upcoming Consultations -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-user-clock text-danger me-2"></i>Priority Intervention Queue</h5>
+                    <small class="text-muted">High-priority students referred by department faculty</small>
+                </div>
+                <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-sm btn-outline-primary fw-semibold">
+                    Manage Queue &rarr;
+                </a>
             </div>
+
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                    <table class="table table-custom table-hover align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th>Student</th>
                                 <th>Referred By</th>
-                                <th>Risk Level</th>
-                                <th>Date</th>
-                                <th>Action</th>
+                                <th>Urgency Level</th>
+                                <th>Timestamp</th>
+                                <th class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for ref in referrals|default([{'name':'John Doe', 'teacher':'Mr. Smith', 'risk':'High', 'date':'Today'}]) %}
+                            {% for ref in referrals|default([
+                                {'name':'Rohan Sharma', 'teacher':'Teacher 1 (CS Dept)', 'risk':'High', 'date':'Today, 10:30 AM', 'id':1},
+                                {'name':'Pooja Verma', 'teacher':'Teacher 2 (ECE Dept)', 'risk':'High', 'date':'Today, 09:15 AM', 'id':2},
+                                {'name':'Karthik Iyer', 'teacher':'Teacher 1 (CS Dept)', 'risk':'High', 'date':'Yesterday', 'id':3},
+                                {'name':'Sneha Patel', 'teacher':'Teacher 3 (Mech Dept)', 'risk':'Medium', 'date':'2 days ago', 'id':4}
+                            ]) %}
                             <tr>
-                                <td class="fw-semibold">{{ ref.name }}</td>
-                                <td class="text-muted">{{ ref.teacher }}</td>
                                 <td>
-                                    <span class="badge {% if ref.risk == 'High' %}badge-high{% else %}badge-medium{% endif %} rounded-pill">
-                                        {{ ref.risk }}
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="user-avatar" style="width: 36px; height: 36px; font-size: 0.85rem; background: {% if ref.risk == 'High' %}linear-gradient(135deg, #ef4444, #dc2626){% else %}linear-gradient(135deg, #f59e0b, #d97706){% endif %};">
+                                            {{ ref.name[:1] | upper }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ ref.name }}</div>
+                                            <small class="text-muted">Student Case #REF-{{ loop.index }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-2 py-1 small">
+                                        <i class="fas fa-chalkboard-teacher me-1 text-muted"></i>{{ ref.teacher }}
                                     </span>
                                 </td>
-                                <td>{{ ref.date }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-primary" style="background-color: var(--primary-color);">Review</a>
+                                    {% if ref.risk == 'High' %}
+                                    <span class="badge-pill badge-high">
+                                        <span class="pulse-dot danger"></span> Immediate Action
+                                    </span>
+                                    {% else %}
+                                    <span class="badge-pill badge-medium">
+                                        <i class="fas fa-circle text-warning" style="font-size: 6px;"></i> Moderate Triage
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted small">
+                                    <i class="far fa-clock me-1"></i>{{ ref.date }}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-sm btn-primary px-3 text-white" style="background: var(--primary-gradient); border: none;">
+                                        Review Case
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -83,26 +179,49 @@
             </div>
         </div>
     </div>
-    
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-white fw-bold"><i class="fas fa-clock text-primary me-2"></i>Upcoming Sessions</div>
+
+    <!-- Upcoming Sessions List -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-calendar-check text-primary me-2"></i>Upcoming Sessions</h5>
+                    <small class="text-muted">Next 48 Hours</small>
+                </div>
+                <a href="{{ url_for('counsellor.sessions') }}" class="small fw-semibold text-primary text-decoration-none">+ New</a>
+            </div>
+
             <div class="card-body p-0">
                 <div class="list-group list-group-flush">
-                    {% for session in sessions|default([{'name':'Jane Smith', 'time':'Today, 2:00 PM'}, {'name':'Mark Lee', 'time':'Tomorrow, 10:00 AM'}]) %}
-                    <div class="list-group-item py-3">
+                    {% for session in sessions|default([
+                        {'name':'Rohan Sharma', 'time':'Today, 2:30 PM', 'topic':'Academic Burnout & Exam Prep', 'status':'Confirmed'},
+                        {'name':'Pooja Verma', 'time':'Tomorrow, 10:00 AM', 'topic':'Attendance Recovery Plan', 'status':'Confirmed'},
+                        {'name':'Karthik Iyer', 'time':'Wednesday, 3:00 PM', 'topic':'Midterm Score Review', 'status':'Pending'}
+                    ]) %}
+                    <div class="list-group-item p-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold text-dark small">{{ session.name }}</span>
+                            <span class="badge bg-success-subtle text-success small border border-success-subtle">{{ session.status }}</span>
+                        </div>
+                        <div class="small text-muted mb-2"><i class="far fa-clock me-1"></i>{{ session.time }}</div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1 fw-bold">{{ session.name }}</h6>
-                                <small class="text-muted"><i class="far fa-clock me-1"></i>{{ session.time }}</small>
-                            </div>
-                            <button class="btn btn-sm btn-outline-success"><i class="fas fa-video"></i></button>
+                            <small class="text-primary fw-semibold"><i class="fas fa-comment-dots me-1"></i>{{ session.topic }}</small>
+                            <button class="btn btn-sm btn-outline-primary py-0 px-2" title="Start Virtual Meeting">
+                                <i class="fas fa-video"></i>
+                            </button>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
             </div>
+
+            <div class="card-footer bg-light border-top text-center py-3">
+                <a href="{{ url_for('counsellor.sessions') }}" class="small fw-bold text-primary text-decoration-none">
+                    View Full Session Calendar &rarr;
+                </a>
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
