@@ -18,20 +18,21 @@ def redirect_based_on_role(role):
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect_based_on_role(current_user.role)
-        
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
         
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password_hash, password):
+            logout_user()
             login_user(user)
             flash('Logged in successfully.', 'success')
             return redirect_based_on_role(user.role)
         else:
             flash('Invalid email or password.', 'danger')
+            
+    elif current_user.is_authenticated:
+        return redirect_based_on_role(current_user.role)
             
     return render_template('auth/login.html')
 

@@ -1,50 +1,116 @@
 {% extends 'base.html' %}
-{% block title %}Alerts - Teacher - EduGuard{% endblock %}
+{% block title %}Critical Alerts & Department Action Queue - EduGuard{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 style="color: var(--primary-color);"><i class="fas fa-bell me-2"></i>My Alerts</h3>
-    <button class="btn btn-outline-primary btn-sm">Mark All as Read</button>
-</div>
 
-<div class="card shadow-sm border-0">
-    <div class="list-group list-group-flush">
-        {% for alert in alerts|default([
-            {'id': 1, 'type': 'risk_high', 'message': 'John Doe (CS) risk level increased to High.', 'time': '10 mins ago', 'read': false},
-            {'id': 2, 'type': 'attendance', 'message': 'Jane Smith has missed 3 consecutive classes.', 'time': '1 day ago', 'read': true}
-        ]) %}
-        <div class="list-group-item py-4 {% if not alert.read %}bg-light border-start border-4 border-primary{% endif %}">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        {% if alert.type == 'risk_high' %}
-                        <i class="fas fa-exclamation-circle fa-2x text-danger"></i>
-                        {% elif alert.type == 'attendance' %}
-                        <i class="fas fa-user-clock fa-2x text-warning"></i>
-                        {% else %}
-                        <i class="fas fa-info-circle fa-2x text-info"></i>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <h6 class="mb-1 fw-bold">{{ alert.message }}</h6>
-                        <small class="text-muted">{{ alert.time }}</small>
-                    </div>
-                </div>
-                <div>
-                    {% if not alert.read %}
-                    <form method="POST" action="" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark as Read</button>
-                    </form>
-                    {% endif %}
-                    <a href="#" class="btn btn-sm btn-primary" style="background-color: var(--primary-color);">View Student</a>
-                </div>
-            </div>
+<!-- Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Department Action Alerts & Notifications</h2>
+            <span class="badge bg-light text-secondary border px-2 py-1 small">{{ department }}</span>
         </div>
-        {% else %}
-        <div class="p-5 text-center text-muted">
-            <i class="fas fa-bell-slash fa-3x mb-3"></i>
-            <h5>No new alerts</h5>
-        </div>
-        {% endfor %}
+        <p class="text-muted small mb-0 mt-1">Classroom attendance alerts, performance concerns, and faculty triage for students in your department.</p>
     </div>
 </div>
+
+<!-- Section 1: Department Action Queue for Flagged Students -->
+<div class="card border shadow-sm mb-4" style="border-radius: 10px;">
+    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-triangle-exclamation text-danger me-2"></i>Students Requiring Classroom Attention ({{ flagged_students|length }})</h6>
+            <small class="text-muted">Students with critical attendance (<75%) or high/medium early-warning risk scores</small>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Student</th>
+                        <th>Semester</th>
+                        <th>Attendance</th>
+                        <th>GPA</th>
+                        <th>Risk Priority</th>
+                        <th>Primary Factor</th>
+                        <th class="text-end pe-3">Faculty Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in flagged_students %}
+                    <tr>
+                        <td class="ps-3">
+                            <div class="fw-bold text-dark">{{ s.name }}</div>
+                            <small class="text-muted">ID: #{{ s.id }} &bull; {{ s.email }}</small>
+                        </td>
+                        <td>Sem {{ s.semester|default(1) }}</td>
+                        <td>
+                            <span class="fw-bold {% if s.attendance_pct < 75 %}text-danger{% else %}text-success{% endif %}">
+                                {{ s.attendance_pct }}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="fw-semibold">{{ "%.2f"|format(s.gpa|default(0.0)) }}</span>
+                        </td>
+                        <td>
+                            {% if s.latest_risk_level == 'High' %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">High ({{ s.latest_risk_score }}%)</span>
+                            {% elif s.latest_risk_level == 'Medium' %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Medium ({{ s.latest_risk_score }}%)</span>
+                            {% else %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Low ({{ s.latest_risk_score }}%)</span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width: 220px;" class="small text-secondary text-truncate" title="{{ s.latest_assessment.contributing_factors if s.latest_assessment else 'Academic & Attendance Monitoring' }}">
+                            {{ (s.latest_assessment.contributing_factors.split(';')[0] if s.latest_assessment and s.latest_assessment.contributing_factors else 'Attendance & Academic concern') }}
+                        </td>
+                        <td class="text-end pe-3">
+                            <a href="{{ url_for('teacher.student_detail', id=s.id) }}" class="btn btn-sm btn-outline-primary">
+                                Inspect & Intervene &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="fas fa-circle-check text-success fa-2x mb-2 d-block"></i>
+                            No students in {{ department }} currently have critical attendance or risk flags.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: System Notifications -->
+<div class="card border shadow-sm" style="border-radius: 10px;">
+    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <div>
+            <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-bell text-primary me-2"></i>System Notifications & Referral Updates</h6>
+            <small class="text-muted">Automated alerts from counsellors and administrators</small>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+            {% for alert in alerts %}
+            <div class="list-group-item py-3 {% if not alert.read %}bg-light border-start border-4 border-primary{% endif %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold text-dark">{{ alert.title }}</div>
+                        <p class="mb-0 text-secondary small">{{ alert.message }}</p>
+                        <small class="text-muted">{{ alert.created_at.strftime('%b %d, %Y %H:%M') if alert.created_at else 'Recent' }}</small>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-4 text-center text-muted">
+                <i class="fas fa-bell-slash fa-2x mb-2 d-block text-secondary opacity-50"></i>
+                <span class="small">No unread notifications at this time.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 {% endblock %}

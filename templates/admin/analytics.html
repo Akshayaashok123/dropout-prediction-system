@@ -1,68 +1,187 @@
 {% extends 'base.html' %}
-{% block title %}Analytics - EduGuard{% endblock %}
+{% block title %}Institutional Analytics & Correlation - EduGuard{% endblock %}
 {% block content %}
-<h3 class="mb-4" style="color: var(--primary-color);">System Analytics</h3>
+
+<!-- Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Institutional Analytics & Correlation</h2>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">Real-time Data</span>
+        </div>
+        <p class="text-muted small mb-0 mt-1">Cross-departmental risk distribution, attendance correlation with academic performance, and cohort trends.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
 
 <div class="row g-4 mb-4">
+    <!-- Chart 1: Risk Distribution -->
     <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header bg-white fw-bold">Overall Risk Distribution</div>
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="fw-bold mb-0 text-dark">Overall Cohort Risk Distribution</h6>
+                <small class="text-muted">Proportion of high, medium, and low priority students</small>
+            </div>
             <div class="card-body">
-                <canvas id="distChart" style="min-height: 300px;"></canvas>
+                <div style="height: 280px; position: relative;">
+                    <canvas id="distChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Chart 2: Stacked Department-wise Risk -->
     <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header bg-white fw-bold">Department-wise Risk</div>
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3">
+                <h6 class="fw-bold mb-0 text-dark">Department-wise Risk Breakdown</h6>
+                <small class="text-muted">Stacked risk priority counts per engineering department</small>
+            </div>
             <div class="card-body">
-                <canvas id="stackedChart" style="min-height: 300px;"></canvas>
+                <div style="height: 280px; position: relative;">
+                    <canvas id="stackedChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row g-4 mb-4">
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header bg-white fw-bold">Attendance vs GPA</div>
-            <div class="card-body">
-                <canvas id="scatterChart" style="min-height: 300px;"></canvas>
+    <!-- Chart 3: Real Attendance vs GPA Scatter Plot -->
+    <div class="col-12">
+        <div class="card border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Attendance vs. GPA Academic Correlation</h6>
+                    <small class="text-muted">Each point represents an active student profile from the database</small>
+                </div>
+                <span class="badge bg-light text-muted border">Correlation Scatter</span>
             </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header bg-white fw-bold">Monthly Dropout Risk Trend</div>
             <div class="card-body">
-                <canvas id="trendChart" style="min-height: 300px;"></canvas>
+                <div style="height: 320px; position: relative;">
+                    <canvas id="scatterChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
+
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const chartData = {{ chart_data | default('null') | tojson }};
-        // Setup empty placeholders if data is not passed
+        const data = {{ chart_data | tojson }};
+
+        // 1. Overall Risk Distribution
         new Chart(document.getElementById('distChart'), {
             type: 'doughnut',
-            data: { labels: ['High', 'Medium', 'Low'], datasets: [{ data: [15, 30, 55], backgroundColor: ['#f44336', '#ff9800', '#4caf50'] }] }
+            data: {
+                labels: ['High Risk', 'Medium Risk', 'Low Risk'],
+                datasets: [{
+                    data: [data.risk_distribution.High, data.risk_distribution.Medium, data.risk_distribution.Low],
+                    backgroundColor: ['#e11d48', '#d97706', '#059669'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                cutout: '68%'
+            }
         });
+
+        // 2. Department-wise Risk (Stacked Bar)
         new Chart(document.getElementById('stackedChart'), {
             type: 'bar',
-            data: { labels: ['CS', 'ENG', 'BUS'], datasets: [{ label: 'High', data: [5, 10, 2], backgroundColor: '#f44336' }] },
-            options: { scales: { x: { stacked: true }, y: { stacked: true } } }
+            data: {
+                labels: data.departments,
+                datasets: [
+                    {
+                        label: 'High Risk',
+                        data: data.dept_high,
+                        backgroundColor: '#e11d48',
+                        borderRadius: 3
+                    },
+                    {
+                        label: 'Medium Risk',
+                        data: data.dept_medium,
+                        backgroundColor: '#d97706',
+                        borderRadius: 3
+                    },
+                    {
+                        label: 'Low Risk',
+                        data: data.dept_low,
+                        backgroundColor: '#059669',
+                        borderRadius: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 2 } }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { boxWidth: 12 } }
+                }
+            }
         });
+
+        // 3. Attendance vs GPA Scatter Plot
         new Chart(document.getElementById('scatterChart'), {
             type: 'scatter',
-            data: { datasets: [{ label: 'Students', data: [{x: 60, y: 2.5}, {x: 80, y: 3.5}, {x: 95, y: 4.0}], backgroundColor: '#1a237e' }] },
-            options: { scales: { x: { title: {display: true, text: 'Attendance %'} }, y: { title: {display: true, text: 'GPA'} } } }
-        });
-        new Chart(document.getElementById('trendChart'), {
-            type: 'line',
-            data: { labels: ['Jan', 'Feb', 'Mar', 'Apr'], datasets: [{ label: 'Avg Risk Score', data: [30, 35, 45, 40], borderColor: '#f44336', fill: true, backgroundColor: 'rgba(244,67,54,0.1)' }] }
+            data: {
+                datasets: [{
+                    label: 'Students (Attendance % vs Cumulative GPA)',
+                    data: data.scatter_points.map(pt => ({ x: pt.x, y: pt.y })),
+                    backgroundColor: data.scatter_points.map(pt => {
+                        if (pt.level === 'High') return '#e11d48';
+                        if (pt.level === 'Medium') return '#d97706';
+                        return '#059669';
+                    }),
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Attendance Rate (%)' },
+                        min: 30,
+                        max: 100,
+                        grid: { color: '#f1f5f9' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Cumulative GPA (0.0 - 10.0)' },
+                        min: 0,
+                        max: 10,
+                        grid: { color: '#f1f5f9' }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return `Attendance: ${ctx.parsed.x}%, GPA: ${ctx.parsed.y}`;
+                            }
+                        }
+                    }
+                }
+            }
         });
     });
 </script>

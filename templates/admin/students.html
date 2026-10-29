@@ -1,88 +1,190 @@
 {% extends 'base.html' %}
-{% block title %}Students - Admin - EduGuard{% endblock %}
+{% block title %}Students Directory & Records - EduGuard{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 style="color: var(--primary-color);">Students Directory</h3>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal" style="background-color: var(--primary-color);">
-        <i class="fas fa-file-csv me-2"></i>Upload CSV
-    </button>
+
+<!-- Header & Controls -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Student Cohort Directory</h2>
+            <span class="badge bg-light text-secondary border px-2 py-1 small">{{ students|length }} Displayed</span>
+        </div>
+        <p class="text-muted small mb-0 mt-1">Search, evaluate, and manage academic risk profiles across all university departments.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-outline-danger d-flex align-items-center gap-2">
+            <i class="fas fa-user-clock"></i>
+            <span>Action Queue</span>
+        </a>
+        <a href="{{ url_for('admin.export_students', department=current_dept, semester=current_sem, risk_level=current_risk, search=current_search) }}" class="btn btn-outline-secondary d-flex align-items-center gap-2" title="Export currently filtered view as CSV">
+            <i class="fas fa-file-export"></i>
+            <span>Export CSV</span>
+        </a>
+        <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm text-white" data-bs-toggle="modal" data-bs-target="#uploadModal" style="background-color: var(--primary); border: none;">
+            <i class="fas fa-file-csv"></i>
+            <span>Upload Student CSV</span>
+        </button>
+    </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form class="row g-3">
-            <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Search by name or ID...">
-            </div>
+<!-- Search, Filter & Sort Form -->
+<div class="card mb-4 border shadow-sm" style="border-radius: 10px;">
+    <div class="card-body p-3">
+        <form method="GET" action="{{ url_for('admin.students') }}" class="row g-2 align-items-center">
+            <!-- Search -->
             <div class="col-md-3">
-                <select class="form-select">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Search name, ID, or email..." value="{{ current_search }}">
+                </div>
+            </div>
+
+            <!-- Department Filter -->
+            <div class="col-sm-6 col-md-2">
+                <select name="department" class="form-select form-select-sm">
                     <option value="">All Departments</option>
-                    <option value="CS">Computer Science</option>
-                    <option value="ENG">Engineering</option>
+                    {% for d in departments %}
+                    <option value="{{ d }}" {% if current_dept == d %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3">
-                <select class="form-select">
+
+            <!-- Semester Filter -->
+            <div class="col-sm-6 col-md-2">
+                <select name="semester" class="form-select form-select-sm">
+                    <option value="">All Semesters</option>
+                    {% for sem in range(1, 9) %}
+                    <option value="{{ sem }}" {% if current_sem == (sem|string) %}selected{% endif %}>Semester {{ sem }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Risk Level Filter -->
+            <div class="col-sm-6 col-md-2">
+                <select name="risk_level" class="form-select form-select-sm">
                     <option value="">All Risk Levels</option>
-                    <option value="High">High Risk</option>
-                    <option value="Medium">Medium Risk</option>
-                    <option value="Low">Low Risk</option>
+                    <option value="High" {% if current_risk == 'High' %}selected{% endif %}>High Risk</option>
+                    <option value="Medium" {% if current_risk == 'Medium' %}selected{% endif %}>Medium Risk</option>
+                    <option value="Low" {% if current_risk == 'Low' %}selected{% endif %}>Low Risk</option>
                 </select>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+
+            <!-- Sort By -->
+            <div class="col-sm-6 col-md-2">
+                <select name="sort" class="form-select form-select-sm">
+                    <option value="risk_desc" {% if current_sort == 'risk_desc' %}selected{% endif %}>Risk: Highest First</option>
+                    <option value="risk_asc" {% if current_sort == 'risk_asc' %}selected{% endif %}>Risk: Lowest First</option>
+                    <option value="att_asc" {% if current_sort == 'att_asc' %}selected{% endif %}>Attendance: Lowest First</option>
+                    <option value="att_desc" {% if current_sort == 'att_desc' %}selected{% endif %}>Attendance: Highest First</option>
+                    <option value="gpa_asc" {% if current_sort == 'gpa_asc' %}selected{% endif %}>GPA: Lowest First</option>
+                    <option value="gpa_desc" {% if current_sort == 'gpa_desc' %}selected{% endif %}>GPA: Highest First</option>
+                    <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name (A-Z)</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-md-1 d-flex gap-1">
+                <button type="submit" class="btn btn-sm btn-primary w-100" style="background-color: var(--primary); border: none;">Filter</button>
+                <a href="{{ url_for('admin.students') }}" class="btn btn-sm btn-outline-secondary" title="Reset Filters"><i class="fas fa-undo"></i></a>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card">
+<!-- Students Directory Table -->
+<div class="card border shadow-sm" style="border-radius: 10px;">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Name</th>
+                        <th class="ps-3">ID & Name</th>
                         <th>Department</th>
                         <th>Sem</th>
                         <th>Attendance</th>
                         <th>GPA</th>
-                        <th>Risk Level</th>
-                        <th>Actions</th>
+                        <th>Risk Assessment</th>
+                        <th>Intervention Status</th>
+                        <th class="text-end pe-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for student in students %}
                     <tr>
-                        <td>
+                        <td class="ps-3">
                             <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-circle p-2 me-2"><i class="fas fa-user text-secondary"></i></div>
+                                <div class="rounded-circle p-2 me-2 text-white d-flex align-items-center justify-content-center" 
+                                     style="width: 34px; height: 34px; font-size: 0.82rem; background: {% if student.latest_risk_level == 'High' %}#e11d48{% elif student.latest_risk_level == 'Medium' %}#d97706{% else %}#059669{% endif %};">
+                                    {{ student.name[:1] | upper }}
+                                </div>
                                 <div>
-                                    <h6 class="mb-0">{{ student.name }}</h6>
+                                    <div class="fw-bold text-dark">{{ student.name }}</div>
                                     <small class="text-muted">{{ student.email }}</small>
                                 </div>
                             </div>
                         </td>
-                        <td>{{ student.department }}</td>
-                        <td>{{ student.semester }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ student.department|default('General') }}</span></td>
+                        <td>Sem {{ student.semester|default(1) }}</td>
                         <td>
-                            <div class="progress" style="height: 6px; width: 60px;">
-                                <div class="progress-bar {% if student.attendance < 75 %}bg-danger{% else %}bg-success{% endif %}" role="progressbar" style="width: {{ student.attendance }}%;"></div>
+                            {% set att = student.attendance_pct|default(0.0) %}
+                            <div class="d-flex align-items-center gap-2" style="max-width: 110px;">
+                                <div class="progress flex-grow-1" style="height: 5px;">
+                                    <div class="progress-bar {% if att < 65 %}bg-danger{% elif att < 75 %}bg-warning{% else %}bg-success{% endif %}" style="width: {{ att }}%;"></div>
+                                </div>
+                                <span class="small fw-semibold">{{ att }}%</span>
                             </div>
-                            <small>{{ student.attendance }}%</small>
                         </td>
-                        <td>{{ student.gpa }}</td>
                         <td>
-                            <span class="badge {% if student.risk_level == 'High' %}badge-high{% elif student.risk_level == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
-                                {{ student.risk_level }}
+                            <span class="fw-semibold">{{ "%.2f"|format(student.gpa|default(0.0)) }}</span>
+                            <small class="text-muted">/10</small>
+                        </td>
+                        <td>
+                            {% set rlevel = student.latest_risk_level %}
+                            {% set rscore = student.latest_risk_score %}
+                            {% if rlevel == 'High' %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                                <i class="fas fa-circle-exclamation me-1"></i>High Risk ({{ rscore }}%)
                             </span>
+                            {% elif rlevel == 'Medium' %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                                <i class="fas fa-triangle-exclamation me-1"></i>Medium ({{ rscore }}%)
+                            </span>
+                            {% else %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                <i class="fas fa-circle-check me-1"></i>Low Risk ({{ rscore }}%)
+                            </span>
+                            {% endif %}
                         </td>
                         <td>
-                            <a href="{{ url_for('admin.student_detail', id=student.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                            {% set latest_sess = student.latest_intervention %}
+                            {% if latest_sess %}
+                                {% if latest_sess.status == 'completed' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">Completed</span>
+                                {% elif latest_sess.status == 'in_progress' %}
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">In Progress</span>
+                                {% else %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Scheduled</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-light text-muted border">None</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-3">
+                            <a href="{{ url_for('admin.student_detail', id=student.id) }}" class="btn btn-sm btn-outline-primary">
+                                View Profile
+                            </a>
                         </td>
                     </tr>
                     {% else %}
-                    <tr><td colspan="7" class="text-center py-4 text-muted">No students found.</td></tr>
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fas fa-user-slash fa-2x mb-2 d-block text-secondary"></i>
+                            No students match the selected search or filter criteria.
+                            <div class="mt-2">
+                                <a href="{{ url_for('admin.students') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+                            </div>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -90,25 +192,44 @@
     </div>
 </div>
 
-<!-- Upload Modal -->
+<!-- Upload CSV Modal with Preview Flow -->
 <div class="modal fade" id="uploadModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Upload Students CSV</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="/admin/upload" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label class="form-label">Select CSV File</label>
-                <input class="form-control" type="file" name="file" accept=".csv" required>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-file-csv text-primary me-2"></i>Upload Student Dataset (CSV)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <p class="small text-muted">CSV must contain headers: name, email, department, semester, attendance, gpa.</p>
-            <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary-color);">Upload & Process</button>
-        </form>
-      </div>
+            <form method="POST" action="{{ url_for('admin.upload_preview') }}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <p class="text-secondary small">
+                        Upload an institutional CSV file to stage and preview records before applying changes. You will review valid rows, data validation errors, and confirmation options prior to database write.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Select CSV File</label>
+                        <input class="form-control" type="file" name="file" accept=".csv" required>
+                    </div>
+
+                    <div class="p-3 bg-light border rounded small">
+                        <span class="fw-bold d-block text-dark mb-1"><i class="fas fa-circle-info text-info me-1"></i>Required & Supported Columns:</span>
+                        <code class="text-primary">name, email, department, semester, attendance, gpa, phone</code>
+                        <div class="mt-2 text-muted" style="font-size: 0.78rem;">
+                            &bull; Attendance: 0 to 100%<br>
+                            &bull; GPA: 0.0 to 10.0 scale<br>
+                            &bull; Semester: 1 to 8 (or 12)
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary text-white" style="background-color: var(--primary); border: none;">
+                        <i class="fas fa-eye me-1"></i>Stage & Preview Records
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
+
 {% endblock %}

@@ -48,6 +48,10 @@ uploads/*
 *.swp
 *.swo
 
+# Testing and scratch
+.pytest_cache/
+scratch/
+
 # OS files
 Thumbs.db
 .DS_Store

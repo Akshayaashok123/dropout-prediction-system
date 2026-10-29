@@ -1,242 +1,339 @@
 {% extends 'base.html' %}
-{% block title %}Admin Command Center - EduGuard{% endblock %}
+{% block title %}Institutional Overview & Risk Surveillance - EduGuard{% endblock %}
 {% block content %}
 
-<!-- Header & Quick Trigger -->
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+<!-- Header & Quick Trigger Controls -->
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4 pb-2 border-bottom">
     <div>
         <div class="d-flex align-items-center gap-2">
-            <h2 class="fw-bold text-dark mb-0">Institutional Analytics & Prediction</h2>
-            <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1">Campus Hub</span>
+            <h2 class="fw-bold text-dark mb-0" style="color: #0f172a;">Student Risk Surveillance & Support Dashboard</h2>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">Campus Wide</span>
         </div>
-        <p class="text-muted small mb-0 mt-1">Real-time risk scoring model monitoring across 5 engineering departments.</p>
+        <p class="text-muted small mb-0 mt-1">Multi-factor early-warning analytics, attendance monitoring, and mentor follow-up management.</p>
     </div>
     
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex flex-wrap align-items-center gap-2">
         <form method="POST" action="{{ url_for('admin.run_prediction') }}" class="m-0">
-            <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm text-white" style="background: var(--primary-gradient); border: none;">
-                <i class="fas fa-brain"></i>
-                <span>Execute Batch AI Prediction</span>
+            <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm text-white" style="background-color: var(--primary); border: none;">
+                <i class="fas fa-microchip"></i>
+                <span>Run Batch AI Prediction</span>
             </button>
         </form>
-        <a href="{{ url_for('admin.students') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
-            <i class="fas fa-user-graduate"></i>
-            <span class="d-none d-sm-inline">All Students</span>
+        <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-outline-danger d-flex align-items-center gap-2">
+            <i class="fas fa-user-clock"></i>
+            <span>Action Queue ({{ stats.high_risk + stats.medium_risk }})</span>
         </a>
+        <a href="{{ url_for('admin.students') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="fas fa-user-graduate"></i>
+            <span>All Students</span>
+        </a>
+        <button type="button" class="btn btn-outline-warning d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#resetModal" title="Reset dataset to initial state">
+            <i class="fas fa-rotate-left"></i>
+            <span>Reset Demo</span>
+        </button>
     </div>
 </div>
 
-<!-- 4 Key Metric Cards -->
+<!-- 6 Core Metric Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="metric-card gradient-indigo">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">Total Enrolled</span>
-                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.total_students|default(50) }}</h2>
-                    <small class="text-white-50"><i class="fas fa-check-circle me-1"></i> Active Roster</small>
-                </div>
-                <div class="metric-icon-bubble">
-                    <i class="fas fa-users"></i>
-                </div>
+    <!-- Total Students -->
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card h-100 border shadow-sm p-3" style="border-radius: 10px; background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-muted small fw-semibold text-uppercase">Total Enrolled</span>
+                <i class="fas fa-users text-primary"></i>
             </div>
-            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
-                <div class="progress-bar bg-white" style="width: 100%;"></div>
-            </div>
+            <h3 class="fw-bold mb-1" style="color: #0f172a;">{{ stats.total_students }}</h3>
+            <span class="small text-muted"><i class="fas fa-graduation-cap me-1"></i>Active Students</span>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="metric-card gradient-danger">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">High Risk</span>
-                        <span class="pulse-dot danger"></span>
-                    </div>
-                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.high_risk|default(0) }}</h2>
-                    <small class="text-white-50"><i class="fas fa-exclamation-triangle me-1"></i> Requires Urgent Care</small>
-                </div>
-                <div class="metric-icon-bubble">
-                    <i class="fas fa-bell"></i>
-                </div>
+    <!-- High Priority Review -->
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card h-100 border shadow-sm p-3 border-start border-4 border-danger" style="border-radius: 10px; background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-danger small fw-bold text-uppercase">High Priority</span>
+                <span class="badge bg-danger-subtle text-danger">Urgent</span>
             </div>
-            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
-                <div class="progress-bar bg-white" style="width: {{ ((stats.high_risk|default(0) / (stats.total_students|default(1) if stats.total_students|default(1) > 0 else 1)) * 100)|round }}%;"></div>
-            </div>
+            <h3 class="fw-bold mb-1 text-danger">{{ stats.high_risk }}</h3>
+            <span class="small text-muted">Immediate Review</span>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="metric-card gradient-warning">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">Medium Risk</span>
-                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.medium_risk|default(0) }}</h2>
-                    <small class="text-white-50"><i class="fas fa-eye me-1"></i> Monitored Closely</small>
-                </div>
-                <div class="metric-icon-bubble">
-                    <i class="fas fa-exclamation-circle"></i>
-                </div>
+    <!-- Medium Priority Review -->
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card h-100 border shadow-sm p-3 border-start border-4 border-warning" style="border-radius: 10px; background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-warning small fw-bold text-uppercase">Medium Priority</span>
+                <span class="badge bg-warning-subtle text-warning">Monitor</span>
             </div>
-            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
-                <div class="progress-bar bg-white" style="width: {{ ((stats.medium_risk|default(0) / (stats.total_students|default(1) if stats.total_students|default(1) > 0 else 1)) * 100)|round }}%;"></div>
-            </div>
+            <h3 class="fw-bold mb-1 text-warning">{{ stats.medium_risk }}</h3>
+            <span class="small text-muted">Needs Attention</span>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="metric-card gradient-success">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <span class="text-white-50 small text-uppercase fw-bold letter-spacing-1">Low Risk</span>
-                    <h2 class="display-6 fw-bold mb-1 text-white">{{ stats.low_risk|default(0) }}</h2>
-                    <small class="text-white-50"><i class="fas fa-shield-alt me-1"></i> Stable & On Track</small>
-                </div>
-                <div class="metric-icon-bubble">
-                    <i class="fas fa-check-double"></i>
-                </div>
+    <!-- Low Priority / Stable -->
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card h-100 border shadow-sm p-3 border-start border-4 border-success" style="border-radius: 10px; background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-success small fw-bold text-uppercase">Low Priority</span>
+                <span class="badge bg-success-subtle text-success">On Track</span>
             </div>
-            <div class="progress mt-3" style="height: 4px; background: rgba(255,255,255,0.2);">
-                <div class="progress-bar bg-white" style="width: {{ ((stats.low_risk|default(0) / (stats.total_students|default(1) if stats.total_students|default(1) > 0 else 1)) * 100)|round }}%;"></div>
+            <h3 class="fw-bold mb-1 text-success">{{ stats.low_risk }}</h3>
+            <span class="small text-muted">Satisfactory Progress</span>
+        </div>
+    </div>
+
+    <!-- Follow-ups Awaiting Action -->
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card h-100 border shadow-sm p-3" style="border-radius: 10px; background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-muted small fw-semibold text-uppercase">Awaiting Action</span>
+                <i class="fas fa-clock text-warning"></i>
             </div>
+            <h3 class="fw-bold mb-1" style="color: #0f172a;">{{ stats.pending_followups }}</h3>
+            <span class="small text-muted"><a href="{{ url_for('counsellor.sessions') }}" class="text-decoration-none text-primary">Pending Follow-ups &rarr;</a></span>
+        </div>
+    </div>
+
+    <!-- Interventions Completed -->
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="card h-100 border shadow-sm p-3" style="border-radius: 10px; background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-muted small fw-semibold text-uppercase">Interventions</span>
+                <i class="fas fa-check-circle text-success"></i>
+            </div>
+            <h3 class="fw-bold mb-1" style="color: #0f172a;">{{ stats.completed_interventions }}</h3>
+            <span class="small text-muted">Completed Cases</span>
         </div>
     </div>
 </div>
 
-<!-- Interactive Chart Section -->
+<!-- 4 Analytical Charts -->
 <div class="row g-4 mb-4">
-    <div class="col-lg-5">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+    <!-- Chart 1: Risk Distribution -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="fw-bold mb-0 text-dark">Risk Level Distribution</h5>
-                    <small class="text-muted">Proportion of student cohort</small>
+                    <h6 class="fw-bold mb-0 text-dark">Risk Level Distribution</h6>
+                    <small class="text-muted">Current cohort classification</small>
                 </div>
-                <span class="badge bg-light text-muted border">Live Ratio</span>
             </div>
-            <div class="card-body d-flex flex-column justify-content-center" style="min-height: 290px;">
-                <div style="height: 220px; position: relative;">
-                    <canvas id="riskChart"></canvas>
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div style="height: 180px; position: relative;">
+                    <canvas id="riskDoughnutChart"></canvas>
                 </div>
                 <div class="d-flex justify-content-around text-center mt-3 pt-2 border-top">
                     <div>
-                        <small class="text-muted d-block">Critical</small>
-                        <span class="fw-bold text-danger">{{ stats.high_risk|default(0) }}</span>
+                        <small class="text-muted d-block">High</small>
+                        <span class="fw-bold text-danger">{{ stats.high_risk }}</span>
                     </div>
                     <div>
-                        <small class="text-muted d-block">Attention</small>
-                        <span class="fw-bold text-warning">{{ stats.medium_risk|default(0) }}</span>
+                        <small class="text-muted d-block">Medium</small>
+                        <span class="fw-bold text-warning">{{ stats.medium_risk }}</span>
                     </div>
                     <div>
-                        <small class="text-muted d-block">Stable</small>
-                        <span class="fw-bold text-success">{{ stats.low_risk|default(0) }}</span>
+                        <small class="text-muted d-block">Low</small>
+                        <span class="fw-bold text-success">{{ stats.low_risk }}</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-7">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+    <!-- Chart 2: Attendance Distribution -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="fw-bold mb-0 text-dark">Department Risk Dispersion</h5>
-                    <small class="text-muted">Distribution across academic faculties</small>
+                    <h6 class="fw-bold mb-0 text-dark">Attendance Distribution</h6>
+                    <small class="text-muted">Lecture presence brackets</small>
                 </div>
-                <a href="{{ url_for('admin.analytics') }}" class="small text-primary fw-semibold text-decoration-none">Deep View &rarr;</a>
             </div>
-            <div class="card-body" style="min-height: 290px;">
-                <div style="height: 240px; position: relative;">
-                    <canvas id="deptChart"></canvas>
+            <div class="card-body">
+                <div style="height: 220px; position: relative;">
+                    <canvas id="attendanceBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 3: GPA Distribution -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Academic Standing (GPA)</h6>
+                    <small class="text-muted">Grade points distribution</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="height: 220px; position: relative;">
+                    <canvas id="gpaBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 4: Intervention Status -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Intervention Tracking</h6>
+                    <small class="text-muted">Mentor follow-up pipeline</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="height: 220px; position: relative;">
+                    <canvas id="interventionChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Recent Risk Assessments Table -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-        <div>
-            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-history text-primary me-2"></i>Recent AI Risk Evaluations</h5>
-            <small class="text-muted">Latest algorithmic assessments logged by the model</small>
+<!-- Two Tables: Recent Assessments & Recent Interventions -->
+<div class="row g-4 mb-4">
+    <!-- Recent Risk Evaluations Table -->
+    <div class="col-lg-7">
+        <div class="card border shadow-sm h-100" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-wave-square text-primary me-2"></i>Latest Early-Warning Evaluations</h6>
+                    <small class="text-muted">Calculated using supervised ML model & pedagogical rules</small>
+                </div>
+                <a href="{{ url_for('admin.students') }}" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Student</th>
+                                <th>Department</th>
+                                <th>Risk Score</th>
+                                <th>Priority</th>
+                                <th>Model / Rule Source</th>
+                                <th class="text-end pe-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in recent_assessments %}
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="fw-semibold text-dark">{{ a.student_name }}</div>
+                                    <small class="text-muted">ID: {{ a.student_id }} &bull; {{ a.date }}</small>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">{{ a.department }}</span></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2" style="max-width: 110px;">
+                                        <div class="progress flex-grow-1" style="height: 5px;">
+                                            <div class="progress-bar {% if a.level == 'High' %}bg-danger{% elif a.level == 'Medium' %}bg-warning{% else %}bg-success{% endif %}" style="width: {{ a.risk_score }}%;"></div>
+                                        </div>
+                                        <span class="small fw-bold">{{ a.risk_score }}%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if a.level == 'High' %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">High</span>
+                                    {% elif a.level == 'Medium' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Medium</span>
+                                    {% else %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Low</span>
+                                    {% endif %}
+                                </td>
+                                <td><small class="text-muted">{{ a.source }}</small></td>
+                                <td class="text-end pe-3">
+                                    <a href="{{ url_for('admin.student_detail', id=a.student_id) }}" class="btn btn-sm btn-outline-primary">
+                                        Inspect
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="6" class="text-center py-4 text-muted">No assessments on record. Click Run Batch AI Prediction.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <a href="{{ url_for('admin.students') }}" class="btn btn-sm btn-outline-primary fw-semibold">
-            View All Students
-        </a>
     </div>
 
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-custom table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Student</th>
-                        <th>Department</th>
-                        <th>Risk Score</th>
-                        <th>Category</th>
-                        <th>Date Evaluated</th>
-                        <th class="text-end">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for assessment in recent_assessments %}
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="user-avatar" style="width: 34px; height: 34px; font-size: 0.82rem; background: linear-gradient(135deg, #6366f1, #8b5cf6);">
-                                    {{ assessment.student_name[:1] | upper }}
-                                </div>
-                                <div class="fw-bold text-dark">{{ assessment.student_name }}</div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge bg-light text-dark border px-2 py-1">{{ assessment.department }}</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2" style="max-width: 130px;">
-                                <div class="progress flex-grow-1" style="height: 6px;">
-                                    <div class="progress-bar {% if assessment.level == 'High' %}bg-danger{% elif assessment.level == 'Medium' %}bg-warning{% else %}bg-success{% endif %}" 
-                                         style="width: {{ assessment.risk_score }}%;"></div>
-                                </div>
-                                <span class="fw-bold small">{{ assessment.risk_score }}%</span>
-                            </div>
-                        </td>
-                        <td>
-                            {% if assessment.level == 'High' %}
-                            <span class="badge-pill badge-high">
-                                <span class="pulse-dot danger"></span> High Risk
-                            </span>
-                            {% elif assessment.level == 'Medium' %}
-                            <span class="badge-pill badge-medium">
-                                <i class="fas fa-circle text-warning" style="font-size: 6px;"></i> Medium Risk
-                            </span>
+    <!-- Recent Interventions Table -->
+    <div class="col-lg-5">
+        <div class="card border shadow-sm h-100" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-handshake text-teal me-2"></i>Recent Mentorship Interventions</h6>
+                    <small class="text-muted">Recorded counseling & student support logs</small>
+                </div>
+                <a href="{{ url_for('counsellor.sessions') }}" class="btn btn-sm btn-outline-secondary">Intervention Hub</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Student & Support</th>
+                                <th>Status</th>
+                                <th class="text-end pe-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sess in recent_interventions %}
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="fw-semibold text-dark">{{ sess.student.name if sess.student else 'Student #' ~ sess.student_id }}</div>
+                                    <small class="text-muted">{{ sess.support_type|default('Academic Mentoring') }} &bull; {{ sess.mentor_name|default('Faculty Advisor') }}</small>
+                                </td>
+                                <td>
+                                    {% if sess.status == 'completed' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Completed</span>
+                                    {% elif sess.status == 'in_progress' %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">In Progress</span>
+                                    {% elif sess.status == 'scheduled' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Scheduled</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border">{{ sess.status|capitalize }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-3 text-muted small">
+                                    {{ sess.scheduled_at.strftime('%b %d') if sess.scheduled_at else 'Recent' }}
+                                </td>
+                            </tr>
                             {% else %}
-                            <span class="badge-pill badge-low">
-                                <i class="fas fa-circle text-success" style="font-size: 6px;"></i> Low Risk
-                            </span>
-                            {% endif %}
-                        </td>
-                        <td class="text-muted small">
-                            <i class="far fa-calendar-alt me-1"></i> {{ assessment.date }}
-                        </td>
-                        <td class="text-end">
-                            <a href="{{ url_for('admin.student_detail', id=assessment.student_id|default(1)) }}" class="btn btn-sm btn-outline-secondary px-3">
-                                Details
-                            </a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">
-                            <i class="fas fa-inbox fa-2x mb-2 d-block text-secondary"></i>
-                            No recent assessments. Click <strong>Execute Batch AI Prediction</strong> above to generate scores.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            <tr><td colspan="3" class="text-center py-4 text-muted">No intervention records found.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reset Demo Data Confirmation Modal -->
+<div class="modal fade" id="resetModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-rotate-left text-warning me-2"></i>Reset Prototype Demo Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary">This will safely reset the database to its pristine baseline evaluation dataset (50 synthetic student profiles, attendance histories, marks, and sample interventions).</p>
+                <div class="alert alert-info py-2 small mb-0">
+                    <i class="fas fa-info-circle me-1"></i> Useful for test demonstrations, judge walk-throughs, or reverting simulated CSV uploads.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('admin.reset_demo_data') }}" class="m-0">
+                    <button type="submit" class="btn btn-warning">Confirm Demo Reset</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -246,17 +343,98 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Doughnut Chart
-        const riskCtx = document.getElementById('riskChart').getContext('2d');
+        const chartData = {{ chart_data | tojson }};
+
+        // Chart 1: Risk Level Distribution (Doughnut)
+        const riskCtx = document.getElementById('riskDoughnutChart').getContext('2d');
         new Chart(riskCtx, {
             type: 'doughnut',
             data: {
                 labels: ['High Risk', 'Medium Risk', 'Low Risk'],
                 datasets: [{
-                    data: [{{ stats.high_risk|default(5) }}, {{ stats.medium_risk|default(15) }}, {{ stats.low_risk|default(30) }}],
-                    backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
-                    hoverOffset: 4,
-                    borderWidth: 0
+                    data: [
+                        chartData.risk_distribution.High,
+                        chartData.risk_distribution.Medium,
+                        chartData.risk_distribution.Low
+                    ],
+                    backgroundColor: ['#e11d48', '#d97706', '#059669'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Chart 2: Attendance Distribution (Bar)
+        const attCtx = document.getElementById('attendanceBarChart').getContext('2d');
+        new Chart(attCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(chartData.attendance_distribution),
+                datasets: [{
+                    label: 'Students',
+                    data: Object.values(chartData.attendance_distribution),
+                    backgroundColor: ['#e11d48', '#f59e0b', '#0d9488', '#059669'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 5 } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Chart 3: GPA Distribution (Bar)
+        const gpaCtx = document.getElementById('gpaBarChart').getContext('2d');
+        new Chart(gpaCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(chartData.gpa_distribution),
+                datasets: [{
+                    label: 'Students',
+                    data: Object.values(chartData.gpa_distribution),
+                    backgroundColor: '#1e3a8a',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 5 } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Chart 4: Intervention Status
+        const intervCtx = document.getElementById('interventionChart').getContext('2d');
+        new Chart(intervCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(chartData.intervention_status),
+                datasets: [{
+                    data: Object.values(chartData.intervention_status),
+                    backgroundColor: ['#f59e0b', '#0284c7', '#10b981', '#94a3b8'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
                 }]
             },
             options: {
@@ -265,68 +443,10 @@
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 15,
-                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: 600 }
-                        }
+                        labels: { boxWidth: 10, font: { size: 10 } }
                     }
                 },
-                cutout: '72%'
-            }
-        });
-
-        // Department Bar Chart
-        const deptCtx = document.getElementById('deptChart').getContext('2d');
-        new Chart(deptCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Computer Science', 'Electronics & Comm.', 'Mechanical', 'Civil', 'Electrical'],
-                datasets: [
-                    {
-                        label: 'High Risk',
-                        data: [3, 2, 4, 1, 2],
-                        backgroundColor: '#ef4444',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Medium Risk',
-                        data: [5, 4, 3, 2, 4],
-                        backgroundColor: '#f59e0b',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Low Risk',
-                        data: [8, 6, 7, 5, 6],
-                        backgroundColor: '#10b981',
-                        borderRadius: 6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        stacked: true,
-                        grid: { display: false },
-                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } }
-                    },
-                    y: {
-                        stacked: true,
-                        grid: { color: '#f1f5f9' },
-                        ticks: { stepSize: 2 }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            boxWidth: 12,
-                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 }
-                        }
-                    }
-                }
+                cutout: '60%'
             }
         });
     });

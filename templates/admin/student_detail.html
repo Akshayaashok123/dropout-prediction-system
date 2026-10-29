@@ -1,120 +1,477 @@
 {% extends 'base.html' %}
-{% block title %}Student Detail - EduGuard{% endblock %}
+{% block title %}{{ student.name }} - Academic Profile & Risk Analysis - EduGuard{% endblock %}
 {% block content %}
-<div class="mb-4">
-    <a href="{{ url_for('admin.students') }}" class="text-decoration-none text-muted"><i class="fas fa-arrow-left me-2"></i>Back to Students</a>
+
+<!-- Back Navigation & Action Bar -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('admin.students') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Students Directory
+        </a>
+        <div>
+            <h3 class="fw-bold text-dark mb-0">{{ student.name }}</h3>
+            <span class="text-muted small">Student ID #{{ student.id }} &bull; Department of {{ student.department|default('General') }} &bull; Semester {{ student.semester|default(1) }}</span>
+        </div>
+    </div>
+    
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm text-white" data-bs-toggle="modal" data-bs-target="#interventionModal" style="background-color: var(--primary); border: none;">
+            <i class="fas fa-hands-helping"></i>
+            <span>Log Mentorship Follow-up</span>
+        </button>
+    </div>
 </div>
 
-<div class="row g-4">
-    <!-- Profile & Risk -->
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body text-center py-4">
-                <div class="bg-light rounded-circle d-inline-flex p-4 mb-3">
-                    <i class="fas fa-user-graduate fa-4x text-secondary"></i>
+<div class="row g-4 mb-4">
+    <!-- Left Column: Student Bio & Explainable Risk Assessment Card -->
+    <div class="col-lg-4">
+        <!-- Profile Card -->
+        <div class="card border shadow-sm mb-4" style="border-radius: 10px;">
+            <div class="card-body p-4 text-center">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-white mb-3 shadow-sm" 
+                     style="width: 72px; height: 72px; font-size: 1.8rem; background: {% if student.latest_risk_level == 'High' %}#e11d48{% elif student.latest_risk_level == 'Medium' %}#d97706{% else %}#059669{% endif %};">
+                    {{ student.name[:1] | upper }}
                 </div>
-                <h4 class="fw-bold mb-1">{{ student.name|default("Student Name") }}</h4>
-                <p class="text-muted mb-3">{{ student.email|default("student@example.com") }}</p>
-                <div class="d-flex justify-content-center gap-2 mb-3">
-                    <span class="badge bg-secondary">{{ student.department|default("CS") }}</span>
-                    <span class="badge bg-secondary">Sem {{ student.semester|default("3") }}</span>
-                    <span class="badge bg-secondary">{{ student.enrollment_year|default("2022") }}</span>
+                <h4 class="fw-bold mb-1 text-dark">{{ student.name }}</h4>
+                <p class="text-muted small mb-3">{{ student.email }}</p>
+                
+                <div class="d-flex justify-content-center gap-2 flex-wrap mb-3">
+                    <span class="badge bg-light text-dark border">{{ student.department|default('General') }}</span>
+                    <span class="badge bg-light text-dark border">Sem {{ student.semester|default(1) }}</span>
+                    <span class="badge bg-light text-dark border">Enrolled: {{ student.enrollment_year|default(2024) }}</span>
+                </div>
+                
+                <div class="border-top pt-3 text-start small text-secondary">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Contact Phone:</span>
+                        <strong class="text-dark">{{ student.contact_phone|default('Not provided') }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Attendance Standing:</span>
+                        <strong class="{% if (student.attendance_pct|default(0)) < 75 %}text-danger{% else %}text-success{% endif %}">
+                            {{ student.attendance_pct|default(0.0) }}%
+                        </strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Cumulative GPA:</span>
+                        <strong class="text-dark">{{ "%.2f"|format(student.gpa|default(0.0)) }} / 10.0</strong>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-4">
-                <h5 class="text-muted mb-3">Current Risk Status</h5>
-                {% set risk = student.risk_level|default("Medium") %}
-                <div class="d-inline-flex justify-content-center align-items-center rounded-circle mb-3 text-white 
-                    {% if risk == 'High' %}badge-high{% elif risk == 'Medium' %}badge-medium{% else %}badge-low{% endif %}" 
-                    style="width: 120px; height: 120px; font-size: 2rem; font-weight: bold;">
-                    {{ student.risk_score|default(65) }}
+        <!-- Explainable Early Warning Assessment Card (Phase 5) -->
+        <div class="card border shadow-sm" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-brain text-teal me-2"></i>Early-Warning Assessment</h6>
+                    {% set rlvl = explanation.risk_level %}
+                    {% if rlvl == 'high' %}
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">High Priority</span>
+                    {% elif rlvl == 'medium' %}
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Medium Priority</span>
+                    {% else %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Low Priority / Stable</span>
+                    {% endif %}
                 </div>
-                <h4 class="fw-bold {% if risk == 'High' %}text-danger{% elif risk == 'Medium' %}text-warning{% else %}text-success{% endif %}">{{ risk }} Risk</h4>
+            </div>
+            <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded mb-3">
+                    <div>
+                        <span class="text-muted small d-block">Early-Warning Propensity Score</span>
+                        <small class="text-muted" style="font-size: 0.72rem;">Model output (0 to 100)</small>
+                    </div>
+                    <h2 class="fw-bold mb-0 {% if rlvl == 'high' %}text-danger{% elif rlvl == 'medium' %}text-warning{% else %}text-success{% endif %}">
+                        {{ explanation.risk_score }}<small class="text-muted" style="font-size: 1rem;">/100</small>
+                    </h2>
+                </div>
+
+                <div class="mb-3">
+                    <span class="fw-semibold small text-dark d-block mb-1">Assessment Source & Methodology:</span>
+                    <span class="badge bg-light text-secondary border small">{{ explanation.assessment_source }}</span>
+                </div>
+
+                <!-- Input Factors Transparently Displayed -->
+                <div class="mb-3">
+                    <span class="fw-semibold small text-dark d-block mb-2">Evaluated Input Metrics:</span>
+                    <div class="row g-2 text-center" style="font-size: 0.8rem;">
+                        <div class="col-6">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="text-muted d-block" style="font-size: 0.72rem;">Attendance</span>
+                                <strong class="{% if explanation.features.attendance_pct < 75 %}text-danger{% else %}text-success{% endif %}">{{ explanation.features.attendance_pct }}%</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="text-muted d-block" style="font-size: 0.72rem;">GPA</span>
+                                <strong class="text-dark">{{ explanation.features.gpa }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="text-muted d-block" style="font-size: 0.72rem;">Internals Avg</span>
+                                <strong class="text-dark">{{ explanation.features.internal_marks_avg }}%</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 border rounded bg-white">
+                                <span class="text-muted d-block" style="font-size: 0.72rem;">Course Backlogs</span>
+                                <strong class="{% if explanation.features.backlogs_count > 0 %}text-danger{% else %}text-muted{% endif %}">{{ explanation.features.backlogs_count }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contributing Reasons -->
+                <div class="mb-3">
+                    <span class="fw-semibold small text-dark d-block mb-1">Identified Alert Reasons:</span>
+                    <ul class="list-unstyled mb-0 small">
+                        {% for factor in explanation.detailed_factors %}
+                        <li class="mb-2 p-2 rounded bg-light border-start border-3 {% if factor.weight >= 25 %}border-danger{% elif factor.weight > 0 %}border-warning{% else %}border-success{% endif %}">
+                            <div class="fw-bold text-dark">{{ factor.factor }}</div>
+                            <div class="text-secondary small">{{ factor.detail }}</div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Basis: {{ factor.source }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Pedagogical Mentor Reason -->
+                <div class="p-3 bg-light rounded mb-3 small">
+                    <strong class="d-block text-dark mb-1"><i class="fas fa-chalkboard-user text-primary me-1"></i>Why Faculty Review is Indicated:</strong>
+                    <span class="text-secondary">{{ explanation.mentor_review_reason }}</span>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="small">
+                    <strong class="d-block text-dark mb-1"><i class="fas fa-list-check text-success me-1"></i>Suggested Counselling Actions:</strong>
+                    <ul class="ps-3 mb-0 text-secondary">
+                        {% for step in explanation.suggested_next_steps %}
+                        <li>{{ step }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts & Data -->
-    <div class="col-md-8">
-        <div class="row g-4 mb-4">
+    <!-- Right Column: Real Academic History, Interventions, Tabs -->
+    <div class="col-lg-8">
+        <!-- Attendance & Subject Marks Real Visuals -->
+        <div class="row g-3 mb-4">
+            <!-- Attendance History Summary -->
             <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-white fw-bold">Attendance Trend (30 Days)</div>
+                <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-calendar-check text-primary me-2"></i>Attendance Log ({{ att_total }} Days)</h6>
+                        <span class="badge {% if student.attendance_pct < 75 %}bg-danger-subtle text-danger{% else %}bg-success-subtle text-success{% endif %} border">
+                            {{ student.attendance_pct }}% Presence
+                        </span>
+                    </div>
                     <div class="card-body">
-                        <canvas id="attendanceChart"></canvas>
+                        <div class="d-flex justify-content-around text-center mb-3 p-2 bg-light rounded">
+                            <div>
+                                <small class="text-muted d-block">Present</small>
+                                <span class="fw-bold text-success">{{ att_present }}</span>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Late</small>
+                                <span class="fw-bold text-warning">{{ att_late }}</span>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Absent</small>
+                                <span class="fw-bold text-danger">{{ att_absent }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Recent attendance scrollable list -->
+                        <div class="table-responsive" style="max-height: 180px;">
+                            <table class="table table-sm table-hover mb-0" style="font-size: 0.82rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for att in attendance_records[:10] %}
+                                    <tr>
+                                        <td>{{ att.date.strftime('%b %d, %Y') if att.date else '' }}</td>
+                                        <td>{{ att.subject }}</td>
+                                        <td>
+                                            {% if att.status|lower == 'present' %}
+                                            <span class="badge bg-success-subtle text-success">Present</span>
+                                            {% elif att.status|lower == 'late' %}
+                                            <span class="badge bg-warning-subtle text-warning">Late</span>
+                                            {% else %}
+                                            <span class="badge bg-danger-subtle text-danger">Absent</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr><td colspan="3" class="text-center text-muted">No attendance logs available.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Subject Performance Summary -->
             <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-white fw-bold">Subject Marks</div>
-                    <div class="card-body">
-                        <canvas id="marksChart"></canvas>
+                <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-book text-teal me-2"></i>Subject Performance</h6>
+                        <span class="badge bg-light text-dark border">Semester {{ student.semester }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 250px;">
+                            <table class="table table-sm table-hover mb-0 align-middle" style="font-size: 0.82rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Subject</th>
+                                        <th>Internal</th>
+                                        <th>Semester</th>
+                                        <th>Assignment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sub, exam_scores in subject_marks.items() %}
+                                    <tr>
+                                        <td class="ps-3 fw-semibold text-dark">{{ sub }}</td>
+                                        <td>
+                                            {% set iscore = exam_scores.get('internal', '-') %}
+                                            <span class="{% if iscore != '-' and iscore < 40 %}text-danger fw-bold{% endif %}">{{ iscore }}</span>
+                                        </td>
+                                        <td>
+                                            {% set sscore = exam_scores.get('semester', '-') %}
+                                            <span class="{% if sscore != '-' and sscore < 40 %}text-danger fw-bold{% endif %}">{{ sscore }}</span>
+                                        </td>
+                                        <td>
+                                            {% set ascore = exam_scores.get('assignment', '-') %}
+                                            <span>{{ ascore }}</span>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr><td colspan="4" class="text-center text-muted py-4">No examination marks recorded yet.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- History & Observations -->
-        <div class="card mb-4">
-            <div class="card-header bg-white fw-bold">Risk History</div>
-            <div class="card-body">
-                <div class="timeline position-relative ps-4 border-start border-2 border-primary">
-                    {% for h in student.risk_history|default([{'date':'Oct 1', 'level':'Low'}, {'date':'Oct 5', 'level':'Medium'}]) %}
-                    <div class="mb-3 position-relative">
-                        <div class="position-absolute bg-primary rounded-circle" style="width: 12px; height: 12px; left: -27px; top: 5px;"></div>
-                        <div class="text-muted small">{{ h.date }}</div>
-                        <div class="fw-semibold">Changed to {{ h.level }} Risk</div>
+        <!-- Full Intervention & Mentorship History Table (Phase 8) -->
+        <div class="card border shadow-sm mb-4" style="border-radius: 10px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-notes-medical text-primary me-2"></i>Intervention Tracking & Follow-up History</h6>
+                    <small class="text-muted">Structured human counseling records</small>
+                </div>
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#interventionModal">
+                    <i class="fas fa-plus me-1"></i>New Follow-up
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 0.88rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Date</th>
+                                <th>Staff Member</th>
+                                <th>Support Type</th>
+                                <th>Notes / Discussion</th>
+                                <th>Status</th>
+                                <th>Outcome</th>
+                                <th>Next Follow-up</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sess in sessions %}
+                            <tr>
+                                <td class="ps-3 text-nowrap">
+                                    {{ sess.scheduled_at.strftime('%b %d, %Y') if sess.scheduled_at else 'Recent' }}
+                                </td>
+                                <td>{{ sess.mentor_name|default('Faculty Advisor') }}</td>
+                                <td><span class="badge bg-light text-dark border">{{ sess.support_type|default('Academic Mentoring') }}</span></td>
+                                <td style="max-width: 220px;" class="text-truncate" title="{{ sess.notes }}">{{ sess.notes|default('General review check-in.') }}</td>
+                                <td>
+                                    {% if sess.status == 'completed' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Completed</span>
+                                    {% elif sess.status == 'in_progress' %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">In Progress</span>
+                                    {% else %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Scheduled</span>
+                                    {% endif %}
+                                </td>
+                                <td style="max-width: 180px;" class="text-truncate" title="{{ sess.outcome }}">{{ sess.outcome|default('Pending follow-up outcome.') }}</td>
+                                <td class="text-nowrap small text-muted">
+                                    {{ sess.next_followup_date.strftime('%b %d, %Y') if sess.next_followup_date else 'None scheduled' }}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    No intervention follow-ups logged yet for this student. Click <strong>New Follow-up</strong> to record the first contact.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations & Observations Tabs -->
+        <ul class="nav nav-tabs mb-3" id="studentTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-semibold" data-bs-toggle="tab" data-bs-target="#recsTab">
+                    <i class="fas fa-sparkles text-teal me-1"></i>Counselling Recommendations ({{ recommendations|length }})
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#obsTab">
+                    <i class="fas fa-clipboard-list text-primary me-1"></i>Faculty Observations ({{ observations|length }})
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-semibold" data-bs-toggle="tab" data-bs-target="#riskTab">
+                    <i class="fas fa-history text-muted me-1"></i>Evaluation History ({{ risk_history|length }})
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content card border shadow-sm p-3 mb-4" style="border-radius: 10px;">
+            <!-- Tab 1: Recommendations -->
+            <div class="tab-pane fade show active" id="recsTab">
+                {% for rec in recommendations %}
+                <div class="p-3 mb-2 bg-light border rounded d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-light text-dark border me-2">{{ rec.type|replace('_', ' ')|capitalize }}</span>
+                        <span class="text-dark">{{ rec.content }}</span>
+                        <div class="text-muted small mt-1">Generated: {{ rec.created_at.strftime('%b %d, %Y') if rec.created_at else 'Recent' }}</div>
                     </div>
+                    {% if rec.acknowledged %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fas fa-check me-1"></i>Student Acknowledged</span>
+                    {% else %}
+                    <span class="badge bg-light text-muted border">Pending Student Review</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0 py-3 text-center">No specific recommendations recorded yet.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Tab 2: Observations -->
+            <div class="tab-pane fade" id="obsTab">
+                {% for o in observations %}
+                <div class="p-3 mb-2 bg-light border rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-dark">{{ o.teacher.user.name if (o.teacher and o.teacher.user) else 'Faculty Member' }}</strong>
+                        <span class="badge bg-secondary-subtle text-secondary">{{ o.category|capitalize }}</span>
+                    </div>
+                    <p class="mb-1 text-secondary small">{{ o.content }}</p>
+                    <small class="text-muted">{{ o.created_at.strftime('%b %d, %Y %H:%M') if o.created_at else '' }}</small>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0 py-3 text-center">No faculty observations logged for this student.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Tab 3: Risk Evaluation History -->
+            <div class="tab-pane fade" id="riskTab">
+                <div class="timeline ps-3 border-start border-2 border-primary">
+                    {% for rh in risk_history %}
+                    <div class="mb-3 position-relative ps-3">
+                        <div class="position-absolute bg-primary rounded-circle" style="width: 10px; height: 10px; left: -19px; top: 6px;"></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-dark">{{ rh.risk_level|capitalize }} Risk ({{ rh.risk_score }}%)</span>
+                            <small class="text-muted">&bull; {{ rh.assessed_at.strftime('%b %d, %Y %H:%M') if rh.assessed_at else '' }}</small>
+                        </div>
+                        <div class="small text-muted">{{ rh.assessment_source|default('Random Forest + Rules') }}</div>
+                        <div class="small text-secondary mt-1">{{ rh.contributing_factors }}</div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No past risk assessment timeline on file.</p>
                     {% endfor %}
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <ul class="nav nav-tabs mb-3" id="studentTabs" role="tablist">
-            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#obs">Observations</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#sessions">Counselling</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#recs">Recommendations</button></li>
-        </ul>
-        <div class="tab-content card border-top-0 rounded-bottom">
-            <div class="tab-pane fade show active p-3" id="obs">
-                <p class="text-muted mb-0">Teacher observations go here.</p>
+<!-- Modal: Record New Intervention -->
+<div class="modal fade" id="interventionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-hands-helping text-primary me-2"></i>Record Mentorship Follow-up</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="tab-pane fade p-3" id="sessions">
-                <p class="text-muted mb-0">Counselling session history goes here.</p>
-            </div>
-            <div class="tab-pane fade p-3" id="recs">
-                <p class="text-muted mb-0">AI recommendations applied go here.</p>
-            </div>
+            <form method="POST" action="{{ url_for('admin.add_intervention', id=student.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Type of Support Offered</label>
+                        <select name="support_type" class="form-select form-select-sm" required>
+                            <option value="Academic Mentoring">Academic Mentoring</option>
+                            <option value="Attendance Barrier Review">Attendance Barrier Review</option>
+                            <option value="Financial Aid Guidance">Financial Aid Guidance</option>
+                            <option value="Wellness / Stress Support">Wellness / Stress Support</option>
+                            <option value="Study Skills Coaching">Study Skills Coaching</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-dark">Date of Contact</label>
+                            <input type="date" name="scheduled_at" class="form-control form-control-sm" value="{{ '' }}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-dark">Next Follow-up Date</label>
+                            <input type="date" name="next_followup_date" class="form-control form-control-sm">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Status</label>
+                        <select name="status" class="form-select form-select-sm" required>
+                            <option value="scheduled">Scheduled / Pending Contact</option>
+                            <option value="in_progress">In Progress (Ongoing Action)</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Staff / Counsellor Assignee</label>
+                        <select name="counsellor_id" class="form-select form-select-sm">
+                            {% for c in counsellors %}
+                            <option value="{{ c.id }}">{{ c.user.name }} ({{ c.specialization|default('Student Support') }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Mentorship Discussion Notes</label>
+                        <textarea name="notes" rows="3" class="form-control form-control-sm" placeholder="Summarize key topics discussed: commute, course difficulty, financial concerns, etc..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Documented Outcome (When Known)</label>
+                        <input type="text" name="outcome" class="form-control form-control-sm" placeholder="e.g. Student enrolled in remedial math; attendance agreement established.">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary text-white" style="background-color: var(--primary); border: none;">Save Intervention Record</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-{% endblock %}
-{% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const attCtx = document.getElementById('attendanceChart').getContext('2d');
-        new Chart(attCtx, {
-            type: 'line',
-            data: {
-                labels: ['W1', 'W2', 'W3', 'W4'],
-                datasets: [{ label: 'Attendance %', data: [90, 85, 70, 60], borderColor: '#1a237e', tension: 0.3 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
 
-        const marksCtx = document.getElementById('marksChart').getContext('2d');
-        new Chart(marksCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Math', 'Physics', 'CS', 'English'],
-                datasets: [{ label: 'Score', data: [65, 50, 85, 70], backgroundColor: '#4caf50' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    });
-</script>
 {% endblock %}

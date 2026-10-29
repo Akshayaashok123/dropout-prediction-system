@@ -62,21 +62,21 @@
         <div class="card">
             <div class="card-header bg-white fw-bold">Add Observation</div>
             <div class="card-body">
-                <form method="POST" action="">
+                <form method="POST" action="{{ url_for('teacher.observe', id=student.id) }}">
                     <div class="mb-3">
                         <label class="form-label text-muted">Category</label>
                         <select class="form-select bg-light" name="category">
-                            <option value="Academic">Academic Performance</option>
-                            <option value="Behavioral">Behavioral Change</option>
-                            <option value="Attendance">Attendance Issue</option>
-                            <option value="Other">Other</option>
+                            <option value="academic">Academic Performance</option>
+                            <option value="behavioral">Behavioral Change</option>
+                            <option value="attendance">Attendance Issue</option>
+                            <option value="personal">Personal / Wellbeing</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label text-muted">Observation Notes</label>
-                        <textarea class="form-control bg-light" name="notes" rows="3" required></textarea>
+                        <textarea class="form-control bg-light" name="content" rows="3" placeholder="Enter classroom observation notes..." required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="background-color: var(--primary-color);">Submit Observation</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--primary);">Submit Observation</button>
                 </form>
             </div>
         </div>
@@ -85,13 +85,18 @@
             <div class="card-header bg-white fw-bold">Previous Observations</div>
             <div class="card-body p-0">
                 <div class="list-group list-group-flush">
-                    {% for obs in observations|default([{'date':'Oct 1', 'category':'Behavioral', 'text':'Seems distracted in class recently.'}]) %}
+                    {% for obs in observations %}
                     <div class="list-group-item py-3">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1 text-primary">{{ obs.category }}</h6>
                             <small class="text-muted">{{ obs.date }}</small>
                         </div>
                         <p class="mb-1 text-sm">{{ obs.text }}</p>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="far fa-comment-dots fa-2x mb-2 text-secondary opacity-50"></i>
+                        <p class="mb-0 small">No teacher observations logged yet for this student.</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -109,12 +114,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form method="POST" action="">
+        <form method="POST" action="{{ url_for('teacher.refer', id=student.id) }}">
             <div class="mb-3">
                 <label class="form-label">Reason for Referral</label>
-                <textarea class="form-control" name="reason" rows="4" required></textarea>
+                <textarea class="form-control" name="reason" rows="4" placeholder="Detail reason for pastoral or counselling intervention..." required></textarea>
             </div>
-            <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary-color);">Confirm Referral</button>
+            <button type="submit" class="btn btn-primary w-100" style="background-color: var(--primary);">Confirm Referral to Counsellor</button>
         </form>
       </div>
     </div>
@@ -124,8 +129,51 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        new Chart(document.getElementById('attChart').getContext('2d'), { type: 'line', data: { labels: ['W1', 'W2', 'W3', 'W4'], datasets: [{ label: 'Attendance %', data: [90, 85, 70, 60], borderColor: '#1a237e' }] } });
-        new Chart(document.getElementById('marksChart').getContext('2d'), { type: 'bar', data: { labels: ['Math', 'Physics', 'CS', 'English'], datasets: [{ label: 'Score', data: [65, 50, 85, 70], backgroundColor: '#4caf50' }] } });
+        const attCtx = document.getElementById('attChart');
+        if (attCtx) {
+            new Chart(attCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: {{ att_labels|tojson }},
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: {{ att_data|tojson }},
+                        borderColor: '#0d9488',
+                        backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { min: 0, max: 100, ticks: { callback: v => v + '%' } }
+                    }
+                }
+            });
+        }
+
+        const marksCtx = document.getElementById('marksChart');
+        if (marksCtx) {
+            new Chart(marksCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: {{ marks_labels|tojson }},
+                    datasets: [{
+                        label: 'Score (out of 100)',
+                        data: {{ marks_data|tojson }},
+                        backgroundColor: '#0284c7',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { min: 0, max: 100 }
+                    }
+                }
+            });
+        }
     });
 </script>
 {% endblock %}
