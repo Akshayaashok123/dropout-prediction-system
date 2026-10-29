@@ -172,14 +172,9 @@
                                     </div>
                                 </td>
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{ url_for('teacher.student_detail', id=student.id|default(loop.index)) }}" class="btn btn-outline-secondary">
-                                            Profile
-                                        </a>
-                                        <a href="{{ url_for('teacher.refer_counsellor', student_id=student.id|default(loop.index)) }}" class="btn btn-outline-danger">
-                                            <i class="fas fa-user-md me-1"></i> Refer
-                                        </a>
-                                    </div>
+                                    <a href="{{ url_for('teacher.student_detail', id=student.id|default(loop.index)) }}" class="btn btn-sm btn-outline-primary">
+                                        View Profile
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}

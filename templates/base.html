@@ -511,13 +511,19 @@
                     <i class="fas fa-chart-line"></i> Dashboard
                 </a>
                 <a href="{{ url_for('admin.students') }}" class="{% if request.endpoint in ['admin.students', 'admin.student_detail'] %}active{% endif %}">
-                    <i class="fas fa-user-graduate"></i> Students
+                    <i class="fas fa-user-graduate"></i> Students Directory
+                </a>
+                <a href="{{ url_for('counsellor.referrals') }}" class="{% if request.endpoint == 'counsellor.referrals' %}active{% endif %}">
+                    <i class="fas fa-user-clock"></i> Mentor Action Queue
+                </a>
+                <a href="{{ url_for('counsellor.sessions') }}" class="{% if request.endpoint == 'counsellor.sessions' %}active{% endif %}">
+                    <i class="fas fa-hands-helping"></i> Intervention Tracker
+                </a>
+                <a href="{{ url_for('admin.analytics') }}" class="{% if request.endpoint == 'admin.analytics' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i> Analytics & Trends
                 </a>
                 <a href="{{ url_for('admin.users') }}" class="{% if request.endpoint == 'admin.users' %}active{% endif %}">
                     <i class="fas fa-users-cog"></i> User Management
-                </a>
-                <a href="{{ url_for('admin.analytics') }}" class="{% if request.endpoint == 'admin.analytics' %}active{% endif %}">
-                    <i class="fas fa-chart-pie"></i> Deep Analytics
                 </a>
             {% elif urole == 'teacher' %}
                 <a href="{{ url_for('teacher.dashboard') }}" class="{% if request.endpoint == 'teacher.dashboard' %}active{% endif %}">
@@ -527,17 +533,17 @@
                     <i class="fas fa-user-graduate"></i> Class Students
                 </a>
                 <a href="{{ url_for('teacher.alerts') }}" class="{% if request.endpoint == 'teacher.alerts' %}active{% endif %}">
-                    <i class="fas fa-bell"></i> Critical Alerts
+                    <i class="fas fa-bell"></i> Critical Action Alerts
                 </a>
             {% elif urole == 'counsellor' %}
                 <a href="{{ url_for('counsellor.dashboard') }}" class="{% if request.endpoint == 'counsellor.dashboard' %}active{% endif %}">
-                    <i class="fas fa-chart-line"></i> Overview
+                    <i class="fas fa-chart-line"></i> Counsellor Overview
                 </a>
                 <a href="{{ url_for('counsellor.referrals') }}" class="{% if request.endpoint == 'counsellor.referrals' %}active{% endif %}">
-                    <i class="fas fa-user-clock"></i> Active Referrals
+                    <i class="fas fa-user-clock"></i> Mentor Action Queue
                 </a>
                 <a href="{{ url_for('counsellor.sessions') }}" class="{% if request.endpoint == 'counsellor.sessions' %}active{% endif %}">
-                    <i class="fas fa-comments"></i> Counselling Sessions
+                    <i class="fas fa-hands-helping"></i> Intervention Tracker
                 </a>
             {% elif urole == 'student' %}
                 <a href="{{ url_for('student.dashboard') }}" class="{% if request.endpoint == 'student.dashboard' %}active{% endif %}">
@@ -563,19 +569,33 @@
 
         <div class="sidebar-footer-card">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-white small fw-bold"><i class="fas fa-shield-alt text-warning me-1"></i> System Online</span>
-                <span class="badge bg-success" style="font-size: 0.65rem;">94.2% Acc.</span>
+                <span class="text-white small fw-bold"><i class="fas fa-brain text-info me-1"></i> AI Advisory Model</span>
+                <span class="badge bg-secondary" style="font-size: 0.65rem;">Simulation</span>
             </div>
-            <div class="progress mb-2" style="height: 4px; background: rgba(255,255,255,0.1);">
-                <div class="progress-bar bg-success" style="width: 94%;"></div>
+            <div class="progress mb-2" style="height: 4px; background: rgba(255,255,255,0.15);">
+                <div class="progress-bar bg-info" style="width: 100%;"></div>
             </div>
-            <small class="text-white-50" style="font-size: 0.72rem;">Role: <strong class="text-white text-capitalize">{{ current_user.role }}</strong></small>
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-white-50" style="font-size: 0.72rem;">Role: <strong class="text-white text-capitalize">{{ current_user.role }}</strong></small>
+                <small class="text-white-50" style="font-size: 0.68rem;">RF + Rules</small>
+            </div>
         </div>
     </aside>
     {% endif %}
 
     <!-- Main Workspace / Container -->
     <main class="{% if current_user.is_authenticated %}main-content{% else %}container mt-5 pt-4{% endif %}" id="mainContent">
+        {% if current_user.is_authenticated %}
+        <!-- Institutional Early-Warning Notice -->
+        <div class="alert alert-light border border-secondary-subtle py-2 px-3 mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 small text-secondary" style="border-radius: 8px; background: #f8fafc;">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-shield-halved text-primary"></i>
+                <span><strong>Supportive Early Warning:</strong> Risk scores indicate students who may benefit from academic, transit, or financial guidance. Predictions do not determine academic eligibility or guarantee dropout.</span>
+            </div>
+            <span class="badge bg-light text-muted border text-nowrap"><i class="fas fa-flask me-1"></i>Demo Simulation Data</span>
+        </div>
+        {% endif %}
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="mb-4">

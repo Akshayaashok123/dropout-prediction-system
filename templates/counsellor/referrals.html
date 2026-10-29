@@ -1,79 +1,266 @@
 {% extends 'base.html' %}
-{% block title %}Referrals - Counsellor - EduGuard{% endblock %}
+{% block title %}Mentor Action Queue - EduGuard{% endblock %}
 {% block content %}
-<h3 class="mb-4" style="color: var(--primary-color);"><i class="fas fa-user-injured me-2"></i>Student Referrals</h3>
 
-<div class="row g-4">
-    {% for ref in referrals|default([
-        {'id':1, 'student':'John Doe', 'risk':'High', 'teacher':'Dr. Smith', 'date':'Oct 5, 2023', 'notes':'Declining attendance and poor performance.'},
-        {'id':2, 'student':'Alice Brown', 'risk':'Medium', 'teacher':'Prof. Davis', 'date':'Oct 4, 2023', 'notes':'Student seems disengaged lately.'}
-    ]) %}
-    <div class="col-md-6">
-        <div class="card shadow-sm border-0 h-100 border-top border-4 {% if ref.risk == 'High' %}border-danger{% else %}border-warning{% endif %}">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h5 class="fw-bold mb-1">{{ ref.student }}</h5>
-                        <small class="text-muted"><i class="fas fa-calendar-day me-1"></i>Referred on {{ ref.date }}</small>
-                    </div>
-                    <span class="badge {% if ref.risk == 'High' %}badge-high{% else %}badge-medium{% endif %} rounded-pill px-3 py-2">
-                        {{ ref.risk }} Risk
-                    </span>
-                </div>
-                
-                <div class="bg-light p-3 rounded mb-4">
-                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Referred By</small>
-                    <p class="mb-2">{{ ref.teacher }}</p>
-                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Teacher Notes</small>
-                    <p class="mb-0 text-sm fst-italic">"{{ ref.notes }}"</p>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <a href="{{ url_for('counsellor.student_detail', id=ref.id) }}" class="btn btn-outline-primary flex-grow-1">View Student Profile</a>
-                    <button class="btn btn-success flex-grow-1" data-bs-toggle="modal" data-bs-target="#scheduleModal">Accept & Schedule</button>
-                </div>
-            </div>
+<!-- Header & Workflow Explanation -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Mentor Action Queue</h2>
+            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 small">
+                {{ queue|length }} Flagged for Attention
+            </span>
         </div>
+        <p class="text-muted small mb-0 mt-1">
+            Prioritized human-in-the-loop review queue: Flagged students requiring supportive faculty advisory, academic check-ins, or barrier evaluations.
+        </p>
     </div>
-    {% else %}
-    <div class="col-12 text-center py-5 text-muted">
-        <i class="fas fa-check-circle fa-4x mb-3 text-success opacity-50"></i>
-        <h4>No Pending Referrals</h4>
-        <p>You're all caught up!</p>
+
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('counsellor.sessions') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+            <i class="fas fa-hands-helping"></i>
+            <span>Intervention Tracker</span>
+        </a>
     </div>
-    {% endfor %}
 </div>
 
-<!-- Schedule Modal -->
-<div class="modal fade" id="scheduleModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Schedule Initial Session</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form>
-            <div class="mb-3">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-control" required>
+<!-- Search, Filter & Sort Form -->
+<div class="card mb-4 border shadow-sm" style="border-radius: 10px;">
+    <div class="card-body p-3">
+        <form method="GET" action="{{ url_for('counsellor.referrals') }}" class="row g-2 align-items-center">
+            <!-- Search -->
+            <div class="col-md-3">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Search name or ID..." value="{{ current_search }}">
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Time</label>
-                <input type="time" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Session Type</label>
-                <select class="form-select">
-                    <option>In-person</option>
-                    <option>Online Video</option>
-                    <option>Phone Call</option>
+
+            <!-- Department -->
+            <div class="col-sm-6 col-md-2">
+                <select name="department" class="form-select form-select-sm">
+                    <option value="">All Departments</option>
+                    {% for d in departments %}
+                    <option value="{{ d }}" {% if current_dept == d %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="btn btn-success w-100">Schedule Session</button>
+
+            <!-- Risk Level -->
+            <div class="col-sm-6 col-md-2">
+                <select name="risk_level" class="form-select form-select-sm">
+                    <option value="">Priority: High & Med</option>
+                    <option value="High" {% if current_risk == 'High' %}selected{% endif %}>High Priority Only</option>
+                    <option value="Medium" {% if current_risk == 'Medium' %}selected{% endif %}>Medium Priority Only</option>
+                    <option value="Low" {% if current_risk == 'Low' %}selected{% endif %}>Low Priority</option>
+                </select>
+            </div>
+
+            <!-- Follow-up Status -->
+            <div class="col-sm-6 col-md-2">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Follow-up States</option>
+                    <option value="none" {% if current_status == 'none' %}selected{% endif %}>Awaiting Initial Contact</option>
+                    <option value="scheduled" {% if current_status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                    <option value="in_progress" {% if current_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                    <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+
+            <!-- Sort -->
+            <div class="col-sm-6 col-md-2">
+                <select name="sort" class="form-select form-select-sm">
+                    <option value="risk_desc" {% if current_sort == 'risk_desc' %}selected{% endif %}>Risk: Highest First</option>
+                    <option value="att_asc" {% if current_sort == 'att_asc' %}selected{% endif %}>Attendance: Lowest First</option>
+                    <option value="gpa_asc" {% if current_sort == 'gpa_asc' %}selected{% endif %}>GPA: Lowest First</option>
+                    <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name (A-Z)</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-md-1 d-flex gap-1">
+                <button type="submit" class="btn btn-sm btn-primary w-100" style="background-color: var(--primary); border: none;">Apply</button>
+                <a href="{{ url_for('counsellor.referrals') }}" class="btn btn-sm btn-outline-secondary" title="Reset Filters"><i class="fas fa-undo"></i></a>
+            </div>
         </form>
-      </div>
     </div>
-  </div>
 </div>
+
+<!-- Action Queue Table -->
+<div class="card border shadow-sm" style="border-radius: 10px;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Student & Department</th>
+                        <th>Risk Priority</th>
+                        <th>Alert Reason & Basis</th>
+                        <th>Key Academic Metrics</th>
+                        <th>Next Recommended Action</th>
+                        <th>Follow-up Status</th>
+                        <th class="text-end pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in queue %}
+                    <tr class="{% if item.risk_level == 'High' %}table-light border-start border-3 border-danger{% endif %}">
+                        <td class="ps-3">
+                            <div class="fw-bold text-dark">{{ item.name }}</div>
+                            <small class="text-muted">ID: #{{ item.id }} &bull; {{ item.department }} (Sem {{ item.semester }})</small>
+                        </td>
+                        <td>
+                            {% if item.risk_level == 'High' %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                                <i class="fas fa-circle-exclamation me-1"></i>High ({{ item.risk_score }}%)
+                            </span>
+                            {% elif item.risk_level == 'Medium' %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                                <i class="fas fa-triangle-exclamation me-1"></i>Medium ({{ item.risk_score }}%)
+                            </span>
+                            {% else %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                Low ({{ item.risk_score }}%)
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width: 240px;">
+                            <div class="text-dark small fw-semibold">{{ item.main_reason }}</div>
+                            <small class="text-muted">Last Contact: {{ item.last_contact_date }}</small>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <span class="d-inline-block me-2">
+                                    Att: <strong class="{% if item.attendance_pct < 75 %}text-danger{% else %}text-success{% endif %}">{{ item.attendance_pct }}%</strong>
+                                </span>
+                                <span>
+                                    GPA: <strong class="text-dark">{{ "%.2f"|format(item.gpa) }}</strong>
+                                </span>
+                            </div>
+                        </td>
+                        <td style="max-width: 220px;">
+                            <span class="badge bg-light text-secondary border small text-wrap text-start">
+                                <i class="fas fa-arrow-right text-primary me-1"></i>{{ item.recommended_action }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if item.followup_status == 'completed' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Completed</span>
+                            {% elif item.followup_status == 'in_progress' %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">In Progress</span>
+                            {% elif item.followup_status == 'scheduled' %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Scheduled</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-danger border border-danger-subtle">Needs Contact</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-3 text-nowrap">
+                            <button type="button" class="btn btn-sm btn-outline-success me-1" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#actionModal"
+                                    data-studentid="{{ item.id }}"
+                                    data-studentname="{{ item.name }}">
+                                <i class="fas fa-comment-dots me-1"></i>Follow-up
+                            </button>
+                            <a href="{{ url_for('counsellor.student_detail', id=item.id) }}" class="btn btn-sm btn-outline-primary">
+                                Profile &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fas fa-check-circle fa-2x text-success mb-2 d-block"></i>
+                            All clear! No students currently require immediate mentor action under the active filters.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Quick Record Follow-up -->
+<div class="modal fade" id="actionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-hands-helping text-primary me-2"></i>Record Mentor Follow-up</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="actionForm" method="POST" action="">
+                <div class="modal-body">
+                    <p class="text-secondary small mb-3">
+                        Logging support for <strong id="modalStudentName" class="text-dark">Student</strong>. This entry will be immediately recorded in the Intervention Tracking system.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Type of Support Offered</label>
+                        <select name="support_type" class="form-select form-select-sm" required>
+                            <option value="Academic Mentoring">Academic Mentoring & Remedial Advice</option>
+                            <option value="Attendance Barrier Review">Attendance Barrier Review & Transit Discussion</option>
+                            <option value="Financial Aid Guidance">Financial Aid & Scholarship Information</option>
+                            <option value="Wellness / Stress Support">Wellness & Stress Management Check-in</option>
+                            <option value="Study Skills Coaching">Study Schedule & Exam Planning</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-dark">Contact Date</label>
+                            <input type="date" name="scheduled_at" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-dark">Next Follow-up Date</label>
+                            <input type="date" name="next_followup_date" class="form-control form-control-sm">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Follow-up Status</label>
+                        <select name="status" class="form-select form-select-sm" required>
+                            <option value="in_progress">In Progress (Ongoing Discussion)</option>
+                            <option value="scheduled">Scheduled (Pending Meeting)</option>
+                            <option value="completed">Completed (Resolution Documented)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Discussion Summary / Notes</label>
+                        <textarea name="notes" rows="3" class="form-control form-control-sm" placeholder="Summarize discussion points, student situation, and agreed next steps..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Outcome (When Known)</label>
+                        <input type="text" name="outcome" class="form-control form-control-sm" placeholder="e.g. Student agreed to attend remedial classes; schedule adjusted.">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-success shadow-sm">Save to Intervention Tracker</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const actionModal = document.getElementById('actionModal');
+        if (actionModal) {
+            actionModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const studentId = button.getAttribute('data-studentid');
+                const studentName = button.getAttribute('data-studentname');
+                
+                document.getElementById('modalStudentName').textContent = studentName + ' (#' + studentId + ')';
+                document.getElementById('actionForm').action = '/counsellor/students/' + studentId + '/session';
+            });
+        }
+    });
+</script>
 {% endblock %}

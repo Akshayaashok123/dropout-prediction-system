@@ -127,6 +127,7 @@ def resources():
     return render_template('student/resources.html', resources=resources_list)
 
 @student.route('/request-help', methods=['GET', 'POST'])
+@student.route('/request_help', methods=['GET', 'POST'])
 def request_help():
     if request.method == 'POST':
         student_profile = Student.query.filter_by(user_id=current_user.id).first()

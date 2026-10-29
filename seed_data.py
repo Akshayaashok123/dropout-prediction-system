@@ -138,6 +138,40 @@ def seed_db():
                     )
                     db.session.add(att)
 
+        print("Seeding Initial Intervention Records...")
+        support_types = [
+            'Academic Mentoring',
+            'Attendance Barrier Review',
+            'Financial Aid Guidance',
+            'Wellness / Stress Support',
+            'Study Skills Coaching'
+        ]
+        
+        for idx, student in enumerate(students[:18]):
+            c = counsellors[idx % len(counsellors)]
+            status = 'scheduled' if idx < 7 else ('in_progress' if idx < 13 else 'completed')
+            scheduled_date = datetime.utcnow() + timedelta(days=random.randint(-14, 7))
+            next_followup = (scheduled_date + timedelta(days=14)).date() if status != 'completed' else None
+            
+            outcome = "Student agreed to join weekly remedial math study group and reported improved routine." if status == 'completed' else (
+                "Initial check-in completed. Connected student with student affairs for fee scholarship." if status == 'in_progress' else ""
+            )
+            notes = f"Mentorship discussion addressing {random.choice(['lecture attendance barriers', 'internal assessment marks', 'time-management and exam anxiety', 'curriculum prerequisites'])}."
+            
+            sess = CounsellingSession(
+                student_id=student.id,
+                counsellor_id=c.id,
+                mentor_name=c.user.name,
+                support_type=random.choice(support_types),
+                scheduled_at=scheduled_date,
+                next_followup_date=next_followup,
+                status=status,
+                session_type='individual',
+                notes=notes,
+                outcome=outcome
+            )
+            db.session.add(sess)
+
         db.session.commit()
         print("Database seeded successfully!")
         
@@ -149,6 +183,7 @@ def seed_db():
         print(f"Attendance Records: {Attendance.query.count()}")
         print(f"Marks Records: {Marks.query.count()}")
         print(f"Risk Assessments: {RiskAssessment.query.count()}")
+        print(f"Interventions / Sessions: {CounsellingSession.query.count()}")
 
 if __name__ == '__main__':
     seed_db()

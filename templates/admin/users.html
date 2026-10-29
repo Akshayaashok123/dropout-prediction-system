@@ -1,56 +1,59 @@
 {% extends 'base.html' %}
-{% block title %}Users - Admin - EduGuard{% endblock %}
+{% block title %}User Management - Admin - EduGuard{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 style="color: var(--primary-color);">System Users</h3>
-    <button class="btn btn-primary" style="background-color: var(--primary-color);"><i class="fas fa-plus me-2"></i>Add User</button>
-</div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form class="row g-3">
-            <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Search users...">
-            </div>
-            <div class="col-md-4">
-                <select class="form-select">
-                    <option value="">Filter by Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Teacher">Teacher</option>
-                    <option value="Counsellor">Counsellor</option>
-                    <option value="Student">Student</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
-            </div>
-        </form>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Campus User Management</h2>
+            <span class="badge bg-light text-secondary border px-2 py-1 small">{{ users|length }} Users</span>
+        </div>
+        <p class="text-muted small mb-0 mt-1">Role-based authentication records for Administrators, Teachers, Counsellors, and Students.</p>
     </div>
 </div>
 
-<div class="card">
+<div class="card border shadow-sm" style="border-radius: 10px;">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Name</th>
+                        <th class="ps-3">Name</th>
                         <th>Email</th>
-                        <th>Role</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th>System Role</th>
+                        <th>Account Created</th>
+                        <th class="text-end pe-3">Profile Access</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
                     <tr>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td><span class="badge bg-secondary">{{ user.role }}</span></td>
-                        <td>{{ user.created_at }}</td>
+                        <td class="ps-3">
+                            <div class="fw-bold text-dark">{{ user.name }}</div>
+                        </td>
+                        <td><code>{{ user.email }}</code></td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            {% if user.role == 'admin' %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Administrator</span>
+                            {% elif user.role == 'counsellor' %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Counsellor</span>
+                            {% elif user.role == 'teacher' %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">Teacher</span>
+                            {% else %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Student</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">
+                            {{ user.created_at.strftime('%b %d, %Y') if user.created_at else 'Active' }}
+                        </td>
+                        <td class="text-end pe-3">
+                            {% if user.role == 'student' and user.student_profile %}
+                            <a href="{{ url_for('admin.student_detail', id=user.student_profile.id) }}" class="btn btn-sm btn-outline-primary">
+                                View Student Profile
+                            </a>
+                            {% else %}
+                            <span class="badge bg-light text-muted border">System Staff</span>
+                            {% endif %}
                         </td>
                     </tr>
                     {% else %}
@@ -61,4 +64,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -1,50 +1,162 @@
 {% extends 'base.html' %}
-{% block title %}My Sessions - Student - EduGuard{% endblock %}
+{% block title %}My Support & Mentoring Sessions - EduGuard{% endblock %}
 {% block content %}
-<h3 class="mb-4" style="color: var(--primary-color);"><i class="fas fa-calendar-alt me-2"></i>My Counselling Sessions</h3>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <h2 class="fw-bold text-dark mb-0"><i class="fas fa-calendar-alt text-primary me-2"></i>My Counselling & Mentoring Sessions</h2>
+        <p class="text-muted small mb-0 mt-1">Track scheduled check-ins, mentor recommendations, and ongoing academic support.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('student.request_help') }}" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm">
+            <i class="fas fa-hands-helping"></i>
+            <span>Schedule New Check-in</span>
+        </a>
+    </div>
+</div>
 
-<div class="row">
-    <div class="col-md-8">
-        <h5 class="fw-bold text-primary mb-3">Upcoming Sessions</h5>
-        {% for session in sessions|default([{'date':'Tomorrow, 2:00 PM', 'counsellor':'Mr. Smith', 'type':'Online Video'}]) %}
-        <div class="card shadow-sm border-0 mb-4 border-start border-4 border-primary">
-            <div class="card-body d-flex justify-content-between align-items-center p-4">
-                <div>
-                    <h5 class="fw-bold mb-1">{{ session.date }}</h5>
-                    <p class="text-muted mb-0"><i class="fas fa-user-md me-2"></i>{{ session.counsellor }}</p>
-                    <p class="text-muted mb-0"><i class="fas fa-video me-2"></i>{{ session.type }}</p>
-                </div>
-                <button class="btn btn-primary" style="background-color: var(--primary-color);">Join Session</button>
-            </div>
-        </div>
-        {% else %}
-        <p class="text-muted">No upcoming sessions scheduled.</p>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <!-- Active & Upcoming Sessions -->
+        <h5 class="fw-bold text-dark mb-3"><i class="far fa-clock text-primary me-2"></i>Upcoming & Active Check-ins</h5>
+        {% set upcoming = [] %}
+        {% for s in sessions if s.status in ['scheduled', 'in_progress'] %}
+            {% set _ = upcoming.append(s) %}
         {% endfor %}
 
-        <h5 class="fw-bold text-muted mt-5 mb-3">Past Sessions</h5>
-        <div class="list-group list-group-flush shadow-sm rounded">
-            {% for past in past_sessions|default([{'date':'Sept 15, 2023', 'counsellor':'Mr. Smith', 'status':'Completed'}]) %}
-            <div class="list-group-item p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="fw-bold mb-1">{{ past.date }}</h6>
-                        <small class="text-muted">with {{ past.counsellor }}</small>
+        {% if upcoming %}
+            {% for session in upcoming %}
+            <div class="card border shadow-sm mb-3 border-start border-4 border-primary" style="border-radius: 8px;">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-2 mb-2">
+                        <div>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-1">
+                                {{ session.support_type|default('Academic Mentoring') }}
+                            </span>
+                            <h5 class="fw-bold text-dark mb-0">
+                                {{ session.scheduled_at.strftime('%A, %B %d, %Y') if session.scheduled_at else 'Scheduled Date Pending' }}
+                            </h5>
+                        </div>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                            {{ session.status|replace('_', ' ')|capitalize }}
+                        </span>
                     </div>
-                    <span class="badge bg-success">{{ past.status }}</span>
+
+                    <div class="row g-2 text-muted small my-2">
+                        <div class="col-sm-6">
+                            <i class="fas fa-user-tie text-secondary me-1"></i>
+                            <strong>Mentor / Counsellor:</strong>
+                            {{ session.mentor_name or (session.counsellor.user.name if session.counsellor and session.counsellor.user else 'Assigned Staff') }}
+                        </div>
+                        <div class="col-sm-6">
+                            <i class="fas fa-clock text-secondary me-1"></i>
+                            <strong>Time:</strong>
+                            {{ session.scheduled_at.strftime('%I:%M %p') if session.scheduled_at else 'During College Hours' }}
+                        </div>
+                    </div>
+
+                    {% if session.notes %}
+                    <div class="bg-light p-3 rounded mt-2 border">
+                        <span class="small fw-semibold text-secondary d-block mb-1">Session Focus:</span>
+                        <p class="small text-dark mb-0">{{ session.notes }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if session.action_plan %}
+                    <div class="mt-2 text-muted small">
+                        <strong>Action Steps:</strong> {{ session.action_plan }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
+        {% else %}
+            <div class="card border shadow-sm mb-4" style="border-radius: 8px;">
+                <div class="card-body p-4 text-center text-muted">
+                    <i class="far fa-calendar-check fa-2x mb-2 text-secondary opacity-50"></i>
+                    <p class="mb-1 fw-semibold text-dark">No upcoming sessions scheduled.</p>
+                    <p class="small mb-0">If you need guidance on academics, attendance, or personal wellness, you can request a session anytime.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Completed Past Sessions -->
+        <h5 class="fw-bold text-dark mt-4 mb-3"><i class="fas fa-history text-secondary me-2"></i>Past Support Records</h5>
+        {% set past = [] %}
+        {% for s in sessions if s.status not in ['scheduled', 'in_progress'] %}
+            {% set _ = past.append(s) %}
+        {% endfor %}
+
+        {% if past %}
+        <div class="list-group list-group-flush border rounded shadow-sm">
+            {% for past_sess in past %}
+            <div class="list-group-item p-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        {{ past_sess.scheduled_at.strftime('%b %d, %Y') if past_sess.scheduled_at else 'Previous Term' }}
+                        &bull;
+                        <span class="text-secondary small fw-normal">{{ past_sess.support_type|default('Advisory Support') }}</span>
+                    </h6>
+                    <span class="badge {% if past_sess.status == 'completed' %}bg-success-subtle text-success border border-success-subtle{% else %}bg-secondary-subtle text-secondary border{% endif %}">
+                        {{ past_sess.status|capitalize }}
+                    </span>
+                </div>
+                <div class="small text-muted mb-1">
+                    With {{ past_sess.mentor_name or (past_sess.counsellor.user.name if past_sess.counsellor and past_sess.counsellor.user else 'Faculty Advisor') }}
+                </div>
+                {% if past_sess.outcome %}
+                <p class="small text-secondary mb-0"><strong>Outcome:</strong> {{ past_sess.outcome }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
-        <!-- Notes are intentionally hidden from student view for privacy -->
+        {% else %}
+        <div class="card border shadow-sm" style="border-radius: 8px;">
+            <div class="card-body p-4 text-center text-muted">
+                <p class="small mb-0">No past session records on file.</p>
+            </div>
+        </div>
+        {% endif %}
     </div>
-    
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 bg-light mt-md-0 mt-4">
+
+    <!-- Quick Help Sidebar -->
+    <div class="col-lg-4">
+        <div class="card border shadow-sm bg-light" style="border-radius: 8px;">
             <div class="card-body p-4 text-center">
-                <i class="fas fa-hands-helping fa-3x text-primary mb-3"></i>
-                <h5 class="fw-bold">Need a Session?</h5>
-                <p class="text-muted small">You can request a meeting with a counsellor at any time. It's completely confidential.</p>
-                <a href="{{ url_for('student.request_help') }}" class="btn btn-outline-primary w-100 fw-bold">Request Help</a>
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle mb-3" style="width: 50px; height: 50px;">
+                    <i class="fas fa-hand-holding-heart fa-lg"></i>
+                </div>
+                <h5 class="fw-bold text-dark">Confidential Guidance</h5>
+                <p class="text-muted small mb-3">
+                    Every session is private, supportive, and designed to help you succeed academically and personally.
+                </p>
+                <a href="{{ url_for('student.request_help') }}" class="btn btn-outline-primary w-100 fw-semibold mb-2">
+                    Request Mentor Check-in
+                </a>
+                <a href="{{ url_for('student.chatbot') }}" class="btn btn-link text-decoration-none small text-muted w-100">
+                    <i class="fas fa-comments me-1"></i>Chat with AI Advisory Assistant
+                </a>
+            </div>
+        </div>
+
+        <div class="card border shadow-sm mt-3" style="border-radius: 8px;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-info-circle text-info me-2"></i>What to Expect</h6>
+            </div>
+            <div class="card-body p-3">
+                <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="fas fa-check-circle text-teal mt-1"></i>
+                        <span>Zero academic penalties or stigma</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="fas fa-check-circle text-teal mt-1"></i>
+                        <span>Tailored study scheduling & attendance remediation</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="fas fa-check-circle text-teal mt-1"></i>
+                        <span>Referrals for fee assistance & departmental tutoring</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

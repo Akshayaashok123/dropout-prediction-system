@@ -1,52 +1,79 @@
 {% extends 'base.html' %}
-{% block title %}My Students - Teacher - EduGuard{% endblock %}
+{% block title %}Department Students - Teacher - EduGuard{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 style="color: var(--primary-color);">My Students</h3>
+
+<!-- Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="fw-bold text-dark mb-0">Department Student Roster</h2>
+            <span class="badge bg-light text-secondary border px-2 py-1 small">{{ students|length }} Students</span>
+        </div>
+        <p class="text-muted small mb-0 mt-1">Classroom engagement metrics, attendance trends, and faculty observation logs.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('teacher.alerts') }}" class="btn btn-outline-danger btn-sm">
+            <i class="fas fa-bell me-1"></i>View Critical Alerts
+        </a>
+    </div>
 </div>
 
 <div class="row g-4">
-    {% for student in students|default([
-        {'id': 1, 'name': 'John Doe', 'attendance': 65, 'gpa': 2.4, 'risk': 'High', 'score': 85},
-        {'id': 2, 'name': 'Jane Smith', 'attendance': 92, 'gpa': 3.8, 'risk': 'Low', 'score': 15}
-    ]) %}
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
+    {% for student in students %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100 border shadow-sm" style="border-radius: 10px;">
+            <div class="card-body p-3">
                 <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-light rounded-circle p-2 me-2"><i class="fas fa-user text-secondary"></i></div>
-                        <h5 class="mb-0 fw-bold">{{ student.name }}</h5>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle p-2 text-white d-flex align-items-center justify-content-center" 
+                             style="width: 36px; height: 36px; font-size: 0.85rem; background: {% if student.latest_risk_level == 'High' %}#e11d48{% elif student.latest_risk_level == 'Medium' %}#d97706{% else %}#059669{% endif %};">
+                            {{ student.name[:1] | upper }}
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">{{ student.name }}</h6>
+                            <small class="text-muted">{{ student.department|default('General') }} &bull; Sem {{ student.semester|default(1) }}</small>
+                        </div>
                     </div>
-                    <span class="badge {% if student.risk == 'High' %}badge-high{% elif student.risk == 'Medium' %}badge-medium{% else %}badge-low{% endif %}">
-                        {{ student.risk }} Risk
-                    </span>
+                    {% if student.latest_risk_level == 'High' %}
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">High ({{ student.latest_risk_score }}%)</span>
+                    {% elif student.latest_risk_level == 'Medium' %}
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Medium ({{ student.latest_risk_score }}%)</span>
+                    {% else %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">Low ({{ student.latest_risk_score }}%)</span>
+                    {% endif %}
                 </div>
                 
-                <div class="row mb-3 text-center g-2">
+                <div class="row g-2 mb-3 text-center">
                     <div class="col-6">
                         <div class="bg-light p-2 rounded">
-                            <small class="text-muted d-block">Attendance</small>
-                            <strong class="{% if student.attendance < 75 %}text-danger{% endif %}">{{ student.attendance }}%</strong>
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">Attendance</small>
+                            <strong class="{% if student.attendance_pct < 75 %}text-danger{% else %}text-success{% endif %}">
+                                {{ student.attendance_pct }}%
+                            </strong>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light p-2 rounded">
-                            <small class="text-muted d-block">GPA</small>
-                            <strong>{{ student.gpa }}</strong>
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">Cumulative GPA</small>
+                            <strong class="text-dark">{{ "%.2f"|format(student.gpa|default(0.0)) }}</strong>
                         </div>
                     </div>
                 </div>
 
                 <div class="d-grid gap-2">
-                    <a href="{{ url_for('teacher.student_detail', id=student.id) }}" class="btn btn-outline-primary btn-sm">View Details</a>
-                    {% if student.risk == 'High' or student.risk == 'Medium' %}
-                    <button class="btn btn-primary btn-sm" style="background-color: var(--primary-color);">Refer to Counsellor</button>
-                    {% endif %}
+                    <a href="{{ url_for('teacher.student_detail', id=student.id) }}" class="btn btn-outline-primary btn-sm">
+                        View Detailed Record &rarr;
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="col-12 text-center py-5 text-muted">
+        <i class="fas fa-users-slash fa-2x mb-2 d-block"></i>
+        No students currently enrolled in this department roster.
+    </div>
     {% endfor %}
 </div>
+
 {% endblock %}

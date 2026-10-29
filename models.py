@@ -39,6 +39,74 @@ class Student(db.Model):
     
     user = db.relationship('User', backref=db.backref('student_profile', uselist=False))
     
+    @property
+    def name(self):
+        return self.user.name if self.user else f'Student #{self.id}'
+
+    @name.setter
+    def name(self, val):
+        if self.user:
+            self.user.name = val
+
+    @property
+    def email(self):
+        return self.user.email if self.user else ''
+
+    @email.setter
+    def email(self, val):
+        if self.user:
+            self.user.email = val
+
+    @property
+    def latest_assessment(self):
+        return self.risk_assessments.order_by(RiskAssessment.assessed_at.desc()).first()
+
+    @property
+    def latest_risk_level(self):
+        la = self.latest_assessment
+        return la.risk_level.capitalize() if la and la.risk_level else 'Low'
+
+    @latest_risk_level.setter
+    def latest_risk_level(self, val):
+        pass
+
+    @property
+    def latest_risk_score(self):
+        la = self.latest_assessment
+        return round(la.risk_score, 1) if la and la.risk_score is not None else 0.0
+
+    @latest_risk_score.setter
+    def latest_risk_score(self, val):
+        pass
+
+    @property
+    def risk_level(self):
+        return self.latest_risk_level
+
+    @risk_level.setter
+    def risk_level(self, val):
+        pass
+
+    @property
+    def risk_score(self):
+        return self.latest_risk_score
+
+    @risk_score.setter
+    def risk_score(self, val):
+        pass
+
+    @property
+    def attendance(self):
+        return round(self.attendance_pct or 0.0, 1)
+
+    @attendance.setter
+    def attendance(self, val):
+        self.attendance_pct = val
+
+    @property
+    def latest_intervention(self):
+        return self.counselling_sessions.order_by(CounsellingSession.scheduled_at.desc()).first()
+
     def __repr__(self):
         return f'<Student {self.user.name if self.user else self.id}>'
 
@@ -92,7 +160,8 @@ class RiskAssessment(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     risk_score = db.Column(db.Float) # 0-100
     risk_level = db.Column(db.String(20)) # low, medium, high
-    contributing_factors = db.Column(db.Text) # JSON text
+    contributing_factors = db.Column(db.Text) # JSON or structured string
+    assessment_source = db.Column(db.String(100), default='Random Forest Model + Rule Engine')
     assessed_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     student = db.relationship('Student', backref=db.backref('risk_assessments', lazy='dynamic'))
@@ -101,10 +170,13 @@ class CounsellingSession(db.Model):
     __tablename__ = 'counselling_sessions'
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
-    counsellor_id = db.Column(db.Integer, db.ForeignKey('counsellors.id'), nullable=False)
+    counsellor_id = db.Column(db.Integer, db.ForeignKey('counsellors.id'), nullable=True)
+    mentor_name = db.Column(db.String(100), nullable=True)
+    support_type = db.Column(db.String(100), default='Academic Mentoring') # Academic Mentoring, Attendance Support, Financial Aid Counseling, Wellness / Stress Check-in, Career Guidance
     scheduled_at = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(20), default='scheduled') # scheduled, completed, cancelled, no-show
-    session_type = db.Column(db.String(50)) # individual, group
+    next_followup_date = db.Column(db.Date, nullable=True)
+    status = db.Column(db.String(20), default='scheduled') # scheduled, in_progress, completed, cancelled, no-show
+    session_type = db.Column(db.String(50), default='individual') # individual, group
     notes = db.Column(db.Text) # private notes
     outcome = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
