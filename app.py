@@ -74,9 +74,14 @@ def create_app(config_class=Config):
     def index():
         return render_template('landing.html')
 
-    # ── Create Tables on First Request ───────────────────────────────
+    # ── Create Tables & Ensure Baseline Demonstration Data ─────────────
     with app.app_context():
         db.create_all()
+        try:
+            from seed_data import ensure_seed_data
+            ensure_seed_data()
+        except Exception as e:
+            app.logger.warning(f"Startup demonstration data seeding notice: {e}")
 
     return app
 

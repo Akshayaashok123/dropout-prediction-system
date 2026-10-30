@@ -45,56 +45,101 @@ EduGuard transforms raw educational telemetry (lecture attendance, continuous in
 
 ---
 
-## 3. Demo Credentials (Ready to Test)
+## 3. Demo Credentials & Synthetic Dataset (Ready to Test)
 
-The database is pre-seeded with 56 user accounts across 4 distinct role personas:
+The database is pre-seeded with **106 user accounts** across 4 distinct role personas, featuring **100 synthetic student records**:
 
 | Role | Email | Password | Primary Console & Capabilities |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@school.edu` | `admin123` | Institutional command center, batch AI scoring, CSV staging & preview, demo reset |
-| **Teacher** | `teacher1@school.edu` | `teacher123` | Department roster, classroom alerts, student observations & referrals |
+| **Administrator** | `admin@school.edu` | `admin123` | Institutional command center, batch AI scoring, CSV staging & preview, CSV export, demo reset |
+| **Teacher** | `teacher1@school.edu` | `teacher123` | Department roster, classroom alerts, student observations & referrals, attendance trend charts |
 | **Counsellor** | `counsellor1@school.edu` | `counsellor123` | Mentor Action Queue, Intervention Tracking Center, 1-on-1 session management |
 | **Student** | `student1@school.edu` | `student123` | Non-stigmatizing Academic Wellness Index, study tips, recommendation acknowledgement, AI companion |
 
-*(You can also use the **1-Click Testing Persona** buttons on the `/login` screen to sign in instantly without typing).*
+*(You can also use the **1-Click Testing Persona** shortcuts on the `/login` screen to sign in instantly without typing).*
 
 ---
 
-## 4. Setup & Running the Application
+## 4. Synthetic Dataset Architecture & Telemetry Generation
 
-### Prerequisites
-- Python 3.10, 3.11, 3.12, or 3.13 installed
-- Git
+In educational data science, student records are protected by strict privacy regulations (FERPA, DPDP Act 2023). Because institutional student dropout data cannot be publicly redistributed, this prototype utilizes a **statistically structured synthetic dataset of 100 fictional student profiles**:
 
-### Installation
+### A. Data Schema & Curriculum Alignment
+- **Student Profiles (100 records)**: Realistically distributed across 5 academic departments (`Computer Science`, `Electronics & Comm.`, `Mechanical`, `Civil`, `Electrical`) and semesters 1 through 8.
+- **Subject Marks (1,500+ records)**: Each department evaluates 5 core discipline subjects with 3 distinct continuous assessment types:
+  - `semester` exams (0-100 scale, with scores < 40 recorded as active course backlogs)
+  - `internal` mid-term assessments (0-100 scale)
+  - `assignment` continuous submissions (0-100 scale)
+- **Multi-Week Attendance Telemetry (3,000+ records)**: 35 to 45 daily session logs per student across 50 academic days with explicit `present`, `absent`, and `late` records.
+
+### B. Distinct Evaluative Cohorts & Trend Testing
+To demonstrate different triage priorities without hardcoding, the dataset models 5 distinct behavioural archetypes:
+1. **Critical Review Cohort (~15 students)**: Low attendance (38-62%), low GPA (2.2-4.2), and 2-4 course backlogs.
+2. **Declining Attendance Trajectory (~13 students)**: Started semester with high attendance (85-92%) during early weeks, but experienced a sharp drop to 30-45% in recent weeks (`attendance_trend < -0.15`), demonstrating temporal early-warning detection.
+3. **Recovering Attendance Cohort (~8 students)**: Started with poor attendance (40-50%), but rebounded to 80-90% in recent sessions (`attendance_trend > +0.10`) following pastoral check-ins.
+4. **Moderate / Borderline Review Cohort (~24 students)**: Attendance hovering between 65-74.5% (approaching statutory 75% limit) and GPA 4.8-6.4.
+5. **Stable / Satisfactory Cohort (~40 students)**: Consistent attendance (82-98%), strong GPA (7.2-9.6), and zero backlogs.
+
+---
+
+## 5. Early-Warning Engine: Rules vs. Machine Learning
+
+### A. Configurable Institutional Policy Rules Engine
+The core explainability layer relies on deterministic institutional rules (`ml/predictor.py`), configured with explicit policy thresholds:
+- **Critical Attendance Deficit**: Attendance < 60.0% (`+35 points`)
+- **Low Attendance Warning**: Attendance < 75.0% (`+20 points`)
+- **Academic Standing Concern**: GPA < 4.0 (`+30 points`)
+- **Moderate Academic Underperformance**: GPA < 5.5 (`+15 points`)
+- **Multiple Course Backlogs**: Uncleared semester courses > 2 (`+20 points`)
+- **Single Course Backlog**: Uncleared semester course > 0 (`+10 points`)
+- **Declining Attendance Trajectory**: Drop between 2nd half and 1st half of attendance records > 15% (`+15 points`)
+- **Low Coursework Engagement**: Assignment submission score average < 50% (`+10 points`)
+
+Every flag displays the **actual recorded value** and the **exact policy rule** (e.g., *"Recorded attendance is 54.2%, critically below institutional minimum (60.0%)"*), ensuring mentors understand the precise pedagogical reason.
+
+### B. Preserved Machine Learning Model
+- **Algorithm**: `RandomForestClassifier` (`ml/model.joblib`), trained on synthetic dataset `ml/student_dataset.csv`.
+- **Target Column**: `dropped_out` (binary: 0 or 1).
+- **Features Pipeline (9 numeric markers)**:
+  `['attendance_pct', 'gpa', 'internal_marks_avg', 'semester_marks_avg', 'assignment_score_avg', 'backlogs_count', 'attendance_trend', 'marks_trend', 'engagement_score']`
+- **Advisory Role**: The model computes a probability score labeled transparently as `"Preserved Random Forest Classifier (Synthetic Training Demonstration)"`. **We do not claim real-world model accuracy or production validation.**
+
+### C. Requirements for Real-World Validation
+Before deploying an ML dropout prediction system in a live university:
+1. **Ethical IRB & Privacy Clearance**: Institutional Review Board clearance and data anonymization following the Digital Personal Data Protection (DPDP) Act.
+2. **Multi-Year Longitudinal Ground Truth**: Retrospective historical datasets across multiple graduating cohorts (4+ years) linking admissions, socio-economic factors, transit constraints, and verified degree completion.
+3. **Fairness & Bias Auditing**: Rigorous demographic parity and disparate impact testing to ensure algorithms do not disproportionately flag underrepresented groups.
+4. **Calibration on Real Intervention Feedback**: Continual recalibration incorporating student feedback and post-mentorship outcome trajectories.
+
+---
+
+## 6. Setup, Startup Loading & Sample CSV
+
+### Application Startup & Automatic Data Loading
+On startup, `app.py` automatically initializes database tables and verifies baseline data presence via `seed_data.ensure_seed_data()`. If the database is fresh, it loads the 100-student synthetic dataset automatically. If records already exist, it skips seeding to prevent duplicate entries.
+
 ```bash
-# 1. Clone repository (if not already local)
-git clone https://github.com/Akshayaashok123/dropout-prediction-system.git
-cd dropout-prediction-system
-
-# 2. Install required dependencies
+# 1. Install required dependencies
 pip install -r requirements.txt
 pip install flask-login flask-sqlalchemy flask-wtf pytest
 
-# 3. Seed demo database with synthetic students, attendance, marks & interventions
-python seed_data.py
-
-# 4. Start the Flask application
+# 2. Start the application (auto-seeds on first launch)
 python app.py
 ```
-Open your browser and navigate to: **`http://127.0.0.1:5000`**
+Open **`http://127.0.0.1:5000`** in your browser.
 
----
+### Downloadable Sample Import CSV
+Administrators can download the exact import format template from:
+- Directory Toolbar button: **"Sample CSV"**
+- Modal link inside: **"Upload Student Dataset (CSV)"**
+- Direct API endpoint: **`/admin/students/sample-csv`**
 
-## 5. CSV Import & Data Validation Workflow
-
-EduGuard provides a robust **Stage & Preview** data ingestion pipeline (`/admin/students` -> Upload CSV):
-
-### Supported CSV Format
+### Supported CSV Schema
 ```csv
 name,email,department,semester,attendance,gpa,phone
-Aarav Mehta,aarav.mehta@school.edu,Computer Science,4,62.5,4.8,555-0192
-Diya Sen,diya.sen@school.edu,Electronics & Comm.,2,88.0,8.2,555-0145
+"Aarav Mehta",demo.student1@school.edu,Computer Science,3,58.5,3.60,555-0101
+"Diya Patel",demo.student2@school.edu,Electronics & Comm.,4,64.0,5.10,555-0102
+"Vikram Singh",demo.student3@school.edu,Mechanical,2,88.5,8.20,555-0103
 ```
 
 ### Validation & Merge Rules

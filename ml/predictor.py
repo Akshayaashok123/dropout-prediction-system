@@ -17,12 +17,25 @@ def get_models():
         print("Warning: Could not import Flask models. Database operations will fail.")
         return None, None, None, None, None, None
 
+# Configurable institutional early-warning policy rules & thresholds
+DEFAULT_POLICY_RULES = {
+    'attendance_critical_cutoff': 60.0,    # Attendance < 60% -> 35 pts
+    'attendance_warning_cutoff': 75.0,     # Attendance < 75% -> 20 pts
+    'gpa_critical_cutoff': 4.0,            # GPA < 4.0 -> 30 pts
+    'gpa_warning_cutoff': 5.5,             # GPA < 5.5 -> 15 pts
+    'backlogs_critical_count': 2,          # Backlogs > 2 -> 20 pts
+    'backlogs_warning_count': 0,           # Backlogs > 0 -> 10 pts
+    'attendance_trend_drop': -0.15,        # 2nd half vs 1st half drop > 15% -> 15 pts
+    'assignment_warning_cutoff': 50.0      # Assignment avg < 50% -> 10 pts
+}
+
 class DropoutPredictor:
-    def __init__(self):
+    def __init__(self, policy_rules=None):
         """
         Initialize the predictor.
         Loads the trained model if available, otherwise falls back to rule-based prediction.
         """
+        self.rules = policy_rules or DEFAULT_POLICY_RULES.copy()
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.model_path = os.path.join(current_dir, 'model.joblib')
         self.features_path = os.path.join(current_dir, 'features.joblib')
@@ -138,78 +151,89 @@ class DropoutPredictor:
 
     def _rule_based_predict(self, features):
         """
-        Fallback prediction using weighted rules (no ML model needed).
-        Returns risk score (0-100) and structured contributing factors.
+        Explainable early-warning assessment using configurable institutional rules (no ML model needed).
+        Returns risk score (0-100) and structured contributing factors with actual values and policy reasons.
         """
         risk_points = 0
         factors = []
+        r = self.rules
         
-        if features['attendance_pct'] < 60:
+        # 1. Attendance Policy Check
+        att = features.get('attendance_pct', 75.0)
+        if att < r['attendance_critical_cutoff']:
             risk_points += 35
             factors.append({
                 'factor': 'Critical Attendance Deficit',
-                'detail': f"Attendance is {features['attendance_pct']}%, significantly below 75% requirement.",
-                'source': 'Rule-Based Attendance Policy',
+                'detail': f"Recorded attendance is {att}%, critically below institutional minimum ({r['attendance_critical_cutoff']}%).",
+                'source': 'Institutional Attendance Rule',
                 'weight': 35
             })
-        elif features['attendance_pct'] < 75:
+        elif att < r['attendance_warning_cutoff']:
             risk_points += 20
             factors.append({
                 'factor': 'Low Attendance Warning',
-                'detail': f"Attendance is {features['attendance_pct']}%, nearing critical cutoff.",
-                'source': 'Rule-Based Attendance Policy',
+                'detail': f"Recorded attendance is {att}%, below the 75% statutory requirement.",
+                'source': 'Institutional Attendance Rule',
                 'weight': 20
             })
             
-        if features['gpa'] < 4.0:
+        # 2. GPA & Academic Standing
+        gpa = features.get('gpa', 7.0)
+        if gpa < r['gpa_critical_cutoff']:
             risk_points += 30
             factors.append({
                 'factor': 'Academic Performance Concern',
-                'detail': f"Cumulative GPA is {features['gpa']}, below minimum academic standing (4.0).",
-                'source': 'Rule-Based Grade Threshold',
+                'detail': f"Cumulative GPA is {gpa:.2f}, below academic probation threshold ({r['gpa_critical_cutoff']:.1f}).",
+                'source': 'Academic Standing Rule',
                 'weight': 30
             })
-        elif features['gpa'] < 5.5:
+        elif gpa < r['gpa_warning_cutoff']:
             risk_points += 15
             factors.append({
                 'factor': 'Moderate Academic Underperformance',
-                'detail': f"Cumulative GPA is {features['gpa']}. Needs subject-level reinforcement.",
-                'source': 'Rule-Based Grade Threshold',
+                'detail': f"Cumulative GPA is {gpa:.2f}, in need of subject reinforcement.",
+                'source': 'Academic Standing Rule',
                 'weight': 15
             })
             
-        if features['backlogs_count'] > 2:
+        # 3. Course Backlogs
+        backlogs = features.get('backlogs_count', 0)
+        if backlogs > r['backlogs_critical_count']:
             risk_points += 20
             factors.append({
                 'factor': 'Multiple Course Backlogs',
-                'detail': f"Currently carrying {features['backlogs_count']} uncleared semester course(s).",
-                'source': 'Rule-Based Backlog Limit',
+                'detail': f"Currently carrying {backlogs} uncleared semester courses (marks < 40).",
+                'source': 'Course Prerequisite Rule',
                 'weight': 20
             })
-        elif features['backlogs_count'] > 0:
+        elif backlogs > r['backlogs_warning_count']:
             risk_points += 10
             factors.append({
                 'factor': 'Pending Course Backlog',
-                'detail': f"Carrying {features['backlogs_count']} uncleared course backlog.",
-                'source': 'Rule-Based Backlog Limit',
+                'detail': f"Carrying {backlogs} uncleared semester course.",
+                'source': 'Course Prerequisite Rule',
                 'weight': 10
             })
             
-        if features['attendance_trend'] < -0.15:
+        # 4. Trajectory & Trend Analysis
+        trend = features.get('attendance_trend', 0.0)
+        if trend < r['attendance_trend_drop']:
             risk_points += 15
             factors.append({
                 'factor': 'Declining Attendance Trajectory',
-                'detail': 'Attendance rate dropped markedly between earlier and recent academic sessions.',
-                'source': 'Rule-Based Trend Analysis',
+                'detail': f"Attendance dropped markedly by {abs(trend)*100:.1f}% between earlier and recent weeks.",
+                'source': 'Telemetry Trend Analysis',
                 'weight': 15
             })
             
-        if features['assignment_score_avg'] < 50:
+        # 5. Coursework & Assignment Engagement
+        assign_avg = features.get('assignment_score_avg', 70.0)
+        if assign_avg < r['assignment_warning_cutoff']:
             risk_points += 10
             factors.append({
                 'factor': 'Low Assignment Engagement',
-                'detail': f"Assignment submission score average is {features['assignment_score_avg']}%.",
-                'source': 'Rule-Based Submission Monitor',
+                'detail': f"Continuous assessment score average is {assign_avg:.1f}%, reflecting submission difficulty.",
+                'source': 'Coursework Engagement Rule',
                 'weight': 10
             })
             
@@ -223,7 +247,7 @@ class DropoutPredictor:
             top_factors = [{
                 'factor': 'Satisfactory Academic Standing',
                 'detail': 'Attendance and academic markers are currently within standard ranges.',
-                'source': 'Baseline Evaluation',
+                'source': 'Baseline Policy Evaluation',
                 'weight': 0
             }]
              
@@ -239,7 +263,8 @@ class DropoutPredictor:
             return {"error": str(e)}
             
         risk_score = 0
-        assessment_source = "Rule-Based Early-Warning Engine"
+        assessment_source = "Rule-Based Early-Warning Engine (Demo Policy Rules)"
+        ml_probability = None
         
         # Calculate rule factors as foundation for explainability
         rule_score, detailed_factors = self._rule_based_predict(features)
@@ -248,16 +273,17 @@ class DropoutPredictor:
             try:
                 # Prepare feature array in correct order
                 X = pd.DataFrame([features])[self.features_list]
-                prob = self.model.predict_proba(X)[0][1]
+                prob = float(self.model.predict_proba(X)[0][1])
+                ml_probability = round(prob, 4)
                 risk_score = int(round(prob * 100))
-                assessment_source = "Random Forest Classifier (Supervised ML)"
+                assessment_source = "Preserved Random Forest Classifier (Synthetic Training Demonstration)"
             except Exception as e:
-                print(f"ML prediction failed: {e}. Falling back to rules.")
+                print(f"ML prediction failed: {e}. Falling back to demo rules.")
                 risk_score = rule_score
-                assessment_source = "Rule-Based Early-Warning Engine"
+                assessment_source = "Rule-Based Early-Warning Engine (Demo Policy Rules)"
         else:
             risk_score = rule_score
-            assessment_source = "Rule-Based Early-Warning Engine"
+            assessment_source = "Rule-Based Early-Warning Engine (Demo Policy Rules)"
             
         # Determine risk priority category
         if risk_score <= 35:
@@ -298,8 +324,10 @@ class DropoutPredictor:
         return {
             'risk_score': risk_score,
             'risk_level': risk_level,
+            'rule_score': rule_score,
+            'ml_probability': ml_probability,
             'assessment_source': assessment_source,
-            'confidence_disclaimer': 'Early-warning propensity score for human-in-the-loop review. Does not determine eligibility or guarantee dropout.',
+            'confidence_disclaimer': 'Early-warning propensity score for human pastoral triage in prototype simulation. Generated from demo synthetic data. Does not determine eligibility or guarantee dropout.',
             'contributing_factors': factor_summaries,
             'detailed_factors': detailed_factors,
             'mentor_review_reason': mentor_reason,

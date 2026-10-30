@@ -139,6 +139,9 @@
             <h6 class="fw-bold mb-0 text-danger"><i class="fas fa-triangle-exclamation text-danger me-2"></i>Validation Failures & Rejected Records ({{ invalid_count }})</h6>
             <small class="text-secondary">These rows contain validation errors and will be omitted from the database write</small>
         </div>
+        <a href="{{ url_for('admin.download_sample_csv') }}" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-file-csv me-1"></i>Download Standard CSV Schema
+        </a>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

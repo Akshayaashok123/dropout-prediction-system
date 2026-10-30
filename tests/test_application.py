@@ -314,4 +314,79 @@ def test_complete_demo_scenario(client, app):
     assert chat_post.status_code == 200
     assert 'attendance' in chat_post.get_json()['reply'].lower()
 
+def test_download_sample_csv(client):
+    login_as(client, 'admin@school.edu', 'admin123')
+    res = client.get('/admin/students/sample-csv')
+    assert res.status_code == 200
+    assert res.headers['Content-Type'].startswith('text/csv')
+    csv_text = res.data.decode('utf-8')
+    assert 'name,email,department,semester,attendance,gpa,phone' in csv_text
+    assert 'demo.sample1@school.edu' in csv_text
+
+def test_synthetic_dataset_metrics(app):
+    with app.app_context():
+        total_students = Student.query.count()
+        assert total_students >= 95, f"Expected ~100 synthetic students, got {total_students}"
+        
+        # Check diverse risk distribution
+        assessments = RiskAssessment.query.all()
+        levels = {a.risk_level.lower() for a in assessments}
+        assert 'high' in levels, "High risk cases should exist in dataset"
+        assert 'medium' in levels, "Medium risk cases should exist in dataset"
+        assert 'low' in levels, "Low risk cases should exist in dataset"
+        
+        # Check historical attendance records
+        att_count = Attendance.query.count()
+        assert att_count >= 2000, f"Expected substantial multi-week attendance records, got {att_count}"
+        
+        # Check marks records
+        marks_count = Marks.query.count()
+        assert marks_count >= 1000, f"Expected subject marks records, got {marks_count}"
+
+def test_trend_based_functionality(app):
+    with app.app_context():
+        predictor = DropoutPredictor()
+        # Find students with negative vs positive trend
+        students = Student.query.all()
+        trends = []
+        for s in students:
+            feats = predictor.extract_features(s.id)
+            trends.append(feats['attendance_trend'])
+            
+        assert any(t < -0.15 for t in trends), "Declining trajectory cohort should have negative trend < -0.15"
+        assert any(t > 0.10 for t in trends), "Recovering trajectory cohort should have positive trend > 0.10"
+
+def test_configurable_rules_engine():
+    custom_rules = {
+        'attendance_critical_cutoff': 50.0,
+        'attendance_warning_cutoff': 70.0,
+        'gpa_critical_cutoff': 3.5,
+        'gpa_warning_cutoff': 5.0,
+        'backlogs_critical_count': 3,
+        'backlogs_warning_count': 1,
+        'attendance_trend_drop': -0.20,
+        'assignment_warning_cutoff': 40.0
+    }
+    predictor = DropoutPredictor(policy_rules=custom_rules)
+    assert predictor.rules['attendance_critical_cutoff'] == 50.0
+    
+    # Test boundary with custom rules
+    feats = {
+        'attendance_pct': 55.0, # Below default 60, but above custom 50
+        'gpa': 6.0,
+        'internal_marks_avg': 65.0,
+        'semester_marks_avg': 65.0,
+        'assignment_score_avg': 70.0,
+        'backlogs_count': 0,
+        'attendance_trend': 0.0,
+        'marks_trend': 0.0,
+        'engagement_score': 62.5
+    }
+    score, factors = predictor._rule_based_predict(feats)
+    # Should get warning (20 pts), not critical (35 pts)
+    factor_names = [f['factor'] for f in factors]
+    assert 'Low Attendance Warning' in factor_names
+    assert 'Critical Attendance Deficit' not in factor_names
+
+
 

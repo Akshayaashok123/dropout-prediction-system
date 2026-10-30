@@ -302,6 +302,23 @@ def export_students():
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
+@admin.route('/students/sample-csv')
+def download_sample_csv():
+    """Download a standardized sample CSV matching the application import schema."""
+    sample_content = (
+        "name,email,department,semester,attendance,gpa,phone\n"
+        "Demo Student (Critical Review),demo.sample1@school.edu,Computer Science,3,52.4,3.40,555-0191\n"
+        "Demo Student (Declining Trajectory),demo.sample2@school.edu,Electronics & Comm.,4,64.5,5.15,555-0192\n"
+        "Demo Student (Moderate Review),demo.sample3@school.edu,Mechanical,2,71.0,5.80,555-0193\n"
+        "Demo Student (Good Standing),demo.sample4@school.edu,Civil,5,86.5,8.25,555-0194\n"
+        "Demo Student (High Performing),demo.sample5@school.edu,Electrical,6,95.0,9.40,555-0195\n"
+    )
+    return Response(
+        sample_content,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=sample_student_import_template.csv"}
+    )
+
 @admin.route('/students/<int:id>')
 def student_detail(id):
     student = Student.query.get_or_404(id)
